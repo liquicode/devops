@@ -21,8 +21,8 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
-			if ( typeof Step.folder === 'undefined' ) { throw new Error( `The "folder" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
+			if ( typeof Step.folder === 'undefined' ) { throw new Error( `${Command.CommandName}: The "folder" field is required.` ); }
 			let path = Engine.ResolvePath( Context, Step.folder );
 			if ( LIB_FS.existsSync( path ) === false ) { return true; }
 			if ( Step.force )

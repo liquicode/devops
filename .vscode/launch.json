@@ -23,6 +23,21 @@
 			"internalConsoleOptions": "openOnSessionStart",
 		},
 		{
+			"name": "devops test",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/src/devops.js",
+			"args": [
+				"test"
+			],
+			"outputCapture": "std",
+			"internalConsoleOptions": "openOnSessionStart",
+		},
+		{
 			"name": "--- Tests ----------------------",
 		},
 		{

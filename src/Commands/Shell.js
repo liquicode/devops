@@ -28,7 +28,7 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step.command === 'undefined' ) { throw new Error( `$Shell: The "command" field is required.` ); }
+			if ( typeof Step.command === 'undefined' ) { throw new Error( `${Command.CommandName}: $Shell: The "command" field is required.` ); }
 
 			// Execute the process.
 			let result = await new Promise(
@@ -61,7 +61,7 @@ Fields:
 				}
 				else
 				{
-					let filename = resolve_path( Context, Step.output );
+					let filename = Engine.ResolvePath( Context, Step.output );
 					LIB_FS.writeFileSync( filename, result.stdout, 'utf8' );
 				}
 			}
@@ -75,7 +75,7 @@ Fields:
 				}
 				else
 				{
-					let filename = resolve_path( Context, Step.errors );
+					let filename = Engine.ResolvePath( Context, Step.errors );
 					LIB_FS.writeFileSync( filename, result.stderr, 'utf8' );
 				}
 			}

@@ -22,7 +22,7 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
 			function r_ClearFolder( Context, Path )
 			{
 				if ( LIB_FS.existsSync( Path ) === false ) { return true; }
@@ -43,7 +43,7 @@ Fields:
 				}
 				return true;
 			}
-			if ( typeof Step.folder === 'undefined' ) { throw new Error( `The "folder" field is required.` ); }
+			if ( typeof Step.folder === 'undefined' ) { throw new Error( `${Command.CommandName}: The "folder" field is required.` ); }
 			let path = Engine.ResolvePath( Context, Step.folder );
 			let result = r_ClearFolder( Context, path );
 			if ( result === false ) { return false; }

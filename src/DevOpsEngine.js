@@ -8,14 +8,18 @@ const LIB_PATH = require( 'path' );
 module.exports = function ( EngineSettings, Tasks )
 {
 	if ( typeof EngineSettings.CommandPath === 'undefined' ) { EngineSettings.CommandPath = null; }
-	if ( typeof EngineSettings.Colors === 'undefined' ) { EngineSettings.Colors = true; }
+	if ( typeof EngineSettings.LogSettings === 'undefined' ) { EngineSettings.LogSettings = {}; }
+	if ( typeof EngineSettings.VariableDelimiters === 'undefined' ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
+	if ( !Array.isArray( EngineSettings.VariableDelimiters ) ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
+	if ( EngineSettings.VariableDelimiters.length === 0 ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
+	if ( EngineSettings.VariableDelimiters.length === 1 ) { EngineSettings.VariableDelimiters.push( EngineSettings.VariableDelimiters[ 0 ] ); }
 
 
 	//---------------------------------------------------------------------
 	// Construct the engine.
 	let Engine = {};
 	Engine.Settings = EngineSettings;
-	Engine.Log = require( './Log' );
+	Engine.Log = require( './Log' )( EngineSettings.LogSettings );
 	Engine.Loose = require( './Loose' );
 	Engine.Commands = {};
 	Engine.Tasks = Tasks;
@@ -59,30 +63,43 @@ module.exports = function ( EngineSettings, Tasks )
 	//---------------------------------------------------------------------
 	Engine.ResolveString = function ( Context, Text )
 	{
-		if ( typeof Context !== 'object' ) { throw new Error( `resolve_string: The "Context" field must be an object.` ); }
-		if ( typeof Text !== 'string' ) { throw new Error( `resolve_string: The "Text" field must be a string.` ); }
+		if ( typeof Context !== 'object' ) { throw new Error( `ResolveString: The "Context" field must be an object.` ); }
+		if ( typeof Text !== 'string' ) { throw new Error( `ResolveString: The "Text" field must be a string.` ); }
 
-		if ( Text.startsWith( '${' ) && Text.endsWith( '}' ) )
+		let items = Engine.Loose.FindAllBetween( Text, EngineSettings.VariableDelimiters[ 0 ], EngineSettings.VariableDelimiters[ 1 ] );
+		for ( let index = 0; index < items.length; index++ )
 		{
-			let found_text = Engine.Loose.FindBetween( Text, '${', '}' );
-			let value = Engine.Loose.GetObjectValue( Context, found_text );
-			return value;
+			let name = items[ index ];
+			let value = Engine.Loose.GetObjectValue( Context, name );
+			if ( typeof value === 'undefined' ) { value = ''; }
+			if ( typeof value !== 'string' ) { value = JSON.stringify( value ); }
+			Text = Text.replace(
+				`${EngineSettings.VariableDelimiters[ 0 ]}${name}${EngineSettings.VariableDelimiters[ 1 ]}`,
+				value );
 		}
-		else
-		{
-			let found_text = Engine.Loose.FindBetween( Text, '${', '}' );
-			if ( found_text !== null ) 
-			{
-				let value = Engine.Loose.GetObjectValue( Context, found_text );
-				if ( typeof value === 'undefined' ) { value = ''; }
-				if ( typeof value !== 'string' )
-				{
-					value = JSON.stringify( value );
-				}
-				Text = Text.replace( "${" + found_text + "}", value );
-			}
-			return Text;
-		}
+		return Text;
+
+		// if ( Text.startsWith( '${' ) && Text.endsWith( '}' ) )
+		// {
+		// 	let found_text = Engine.Loose.FindBetween( Text, '${', '}' );
+		// 	let value = Engine.Loose.GetObjectValue( Context, found_text );
+		// 	return value;
+		// }
+		// else
+		// {
+		// 	let found_text = Engine.Loose.FindBetween( Text, '${', '}' );
+		// 	if ( found_text !== null ) 
+		// 	{
+		// 		let value = Engine.Loose.GetObjectValue( Context, found_text );
+		// 		if ( typeof value === 'undefined' ) { value = ''; }
+		// 		if ( typeof value !== 'string' )
+		// 		{
+		// 			value = JSON.stringify( value );
+		// 		}
+		// 		Text = Text.replace( "${" + found_text + "}", value );
+		// 	}
+		// 	return Text;
+		// }
 	};
 
 
@@ -90,7 +107,7 @@ module.exports = function ( EngineSettings, Tasks )
 	Engine.ResolvePath = function ( Context, Path )
 	{
 		Path = Engine.ResolveString( Context, Path );
-		Path = LIB_PATH.join( PackageFolder, Path );
+		Path = LIB_PATH.join( Engine.Settings.PackageFolder, Path );
 		return Path;
 	};
 
@@ -98,12 +115,10 @@ module.exports = function ( EngineSettings, Tasks )
 	//---------------------------------------------------------------------
 	Engine.RunTask = async function ( TaskName, Context )
 	{
-		Engine.Log.Print( `Running task [${TaskName}].` );
-
 		// Load the task.
-		let task = Engine.Tasks[ TaskName ];
-		if ( typeof task === 'undefined' ) { throw new Error( `The task [${TaskName}] does not exist.` ); }
-		if ( !Array.isArray( task ) ) { throw new Error( `The task [${TaskName}] must be an array of steps.` ); }
+		let steps = Engine.Tasks[ TaskName ];
+		if ( typeof steps === 'undefined' ) { throw new Error( `RunTask: The task [${TaskName}] does not exist.` ); }
+		if ( !Array.isArray( steps ) ) { throw new Error( `RunTask: The task [${TaskName}] must be an array of steps.` ); }
 
 		// Prepare the execution context.
 		let context = {};
@@ -112,30 +127,72 @@ module.exports = function ( EngineSettings, Tasks )
 			context = Context;
 		}
 
-		// Execute the task commands.
-		for ( let index = 0; index < task.length; index++ )
+		// Get the current working directory.
+		let previous_working_directory = process.cwd();
+
+		try
 		{
-			let step = task[ index ];
-			Engine.Log.Print( `Invoking [${step.CommandName}].` );
-			try
+			process.chdir( Engine.Settings.PackageFolder );
+
+			// Execute the task commands.
+			Engine.Log.Heading( `Task: ${TaskName}` );
+			Engine.Log.Indent();
+			let task_t0 = new Date();
+			for ( let index = 0; index < steps.length; index++ )
 			{
-				let result = await step.Invoke( step, context );
-				if ( result === false )
+				let step = steps[ index ];
+				let keys = Object.keys( step );
+				if ( keys.length !== 1 ) { throw new Error( `RunTask: Each task step must have one, and only one, command.` ); }
+				let command_name = keys[ 0 ];
+				let command = Engine.Commands[ command_name ];
+				if ( typeof command === 'undefined' ) { throw new Error( `RunTask: The command [${command_name}] does not exist.` ); }
+				Engine.Log.Heading( `Step: ${command_name}` );
+				Engine.Log.Indent();
+				try
 				{
-					Engine.Log.Print( `The step [${step.CommandName}] returned false and halted execution of task [${TaskName}].` );
+					Engine.Log.Indent();
+					let step_t0 = new Date();
+					let result = await command.Invoke( step[ command_name ], context );
+					let step_t1 = new Date();
+					if ( result === true )
+					{
+						Engine.Log.Muted( `${command_name} OK, ${step_t1 - step_t0} ms.` );
+					}
+					else
+					{
+						Engine.Log.Error( `RunTask: The step [${command_name}] returned false and halted the execution of task [${TaskName}].` );
+					}
+					Engine.Log.Unindent();
+					if ( result === false ) { return false; }
+
+				}
+				catch ( error )
+				{
+					Engine.Log.Error( `RunTask: ${command_name} threw an error: ${error.message}` );
 					return false;
 				}
+				finally
+				{
+					Engine.Log.Unindent();
+				}
 			}
-			catch ( error )
-			{
-				Engine.Log.Print( `${step.CommandName} threw an error:` );
-				Engine.Log.Print( error );
-				return false;
-			}
+			Engine.Log.Unindent();
+			let task_t1 = new Date();
+			Engine.Log.Muted( `${TaskName} OK, ${task_t1 - task_t0} ms.` );
+
+			// Return, OK.
+			return true;
+
+		}
+		catch ( error )
+		{
+			Engine.Log.Error( `${error.message}` );
+		}
+		finally
+		{
+			process.chdir( previous_working_directory );
 		}
 
-		// Return, OK.
-		return true;
 	};
 
 

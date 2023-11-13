@@ -20,16 +20,16 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
-			if ( typeof Step.filename === 'undefined' ) { throw new Error( `The "filename" field is required.` ); }
-			if ( typeof Step.context === 'undefined' ) { throw new Error( `The "context" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
+			if ( typeof Step.filename === 'undefined' ) { throw new Error( `${Command.CommandName}: The "filename" field is required.` ); }
+			if ( typeof Step.context === 'undefined' ) { throw new Error( `${Command.CommandName}: The "context" field is required.` ); }
 			let filename = Engine.ResolvePath( Context, Step.filename );
-			let data = JSON.parse( LIB_FS.readFileSync( filename, 'utf8' ) );
+			let value = JSON.parse( LIB_FS.readFileSync( filename, 'utf8' ) );
 			if ( typeof Step.field !== 'undefined' )
 			{
-				data = Engine.Loose.GetObjectValue( data, Step.field );
+				value = Engine.Loose.GetObjectValue( value, Step.field );
 			}
-			let result = Engine.Loose.SetObjectValue( Context, Step.context, data );
+			let result = Engine.Loose.SetObjectValue( Context, Step.context, value );
 			if ( result === false ) { return false; }
 			return true;
 		},

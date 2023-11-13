@@ -18,9 +18,9 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
-			if ( typeof Step.name === 'undefined' ) { throw new Error( `The "name" field is required.` ); }
-			if ( typeof Step.name !== 'string' ) { throw new Error( `The "name" field must be a string.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
+			if ( typeof Step.name === 'undefined' ) { throw new Error( `${Command.CommandName}: The "name" field is required.` ); }
+			if ( typeof Step.name !== 'string' ) { throw new Error( `${Command.CommandName}: The "name" field must be a string.` ); }
 			let name = Engine.ResolveString( Context, Step.name );
 			let context = null;
 			if ( Step.inherit_context )

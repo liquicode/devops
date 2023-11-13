@@ -21,9 +21,9 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
-			if ( typeof Step.from === 'undefined' ) { throw new Error( `$CopyFile: The "from" field is required.` ); }
-			if ( typeof Step.to === 'undefined' ) { throw new Error( `$CopyFile: The "to" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
+			if ( typeof Step.from === 'undefined' ) { throw new Error( `${Command.CommandName}: $CopyFile: The "from" field is required.` ); }
+			if ( typeof Step.to === 'undefined' ) { throw new Error( `${Command.CommandName}: $CopyFile: The "to" field is required.` ); }
 			let from_path = Engine.ResolvePath( Context, Step.from );
 			let to_path = Engine.ResolvePath( Context, Step.to );
 			LIB_FS.copyFileSync( from_path, to_path );

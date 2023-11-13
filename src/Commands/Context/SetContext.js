@@ -18,12 +18,10 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
-			if ( typeof Step.context === 'undefined' ) { throw new Error( `The "context" field is required.` ); }
-			if ( typeof Step.context !== 'string' ) { throw new Error( `The "context" field must be a string.` ); }
-			if ( !Step.context.startsWith( '${' ) || !Step.context.endsWith( '}' ) ) { throw new Error( `The "context" field must be context variable (e.g. "\${field}").` ); }
-			let field_name = Engine.Loose.FindBetween( Step.context, '${', '}' );
-			let result = Engine.Loose.SetObjectValue( Context, field_name, Step.value );
+			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The [Step] parameter is required.` ); }
+			if ( typeof Step.context === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field is required.` ); }
+			if ( typeof Step.context !== 'string' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field must be a string.` ); }
+			let result = Engine.Loose.SetObjectValue( Context, Step.context, Step.value );
 			if ( result === false ) { return false; }
 			return true;
 		},
