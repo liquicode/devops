@@ -29,35 +29,56 @@ Fields:
 		Invoke: async function ( Step, Context )
 		{
 			if ( typeof Step.command === 'undefined' ) { throw new Error( `${Command.CommandName}: $Shell: The "command" field is required.` ); }
+			if ( typeof Step.command !== 'string' ) { throw new Error( `${Command.CommandName}: $Shell: The "command" field must be a string.` ); }
 
-			// Execute the process.
-			let result = await new Promise(
-				( resolve, reject ) =>
-				{
-					LIB_CHILD_PROCESS.exec( Step.command,
-						( error, stdout, stderr ) =>
-						{
-							if ( error )
+			let command = Engine.ResolveString( Context, Step.command );
+			let result = null;
+
+			try
+			{
+				// Execute the process.
+				result = await new Promise(
+					( resolve, reject ) =>
+					{
+						LIB_CHILD_PROCESS.exec( command,
+							( error, stdout, stderr ) =>
 							{
-								reject( error );
-								return;
-							}
-							let output =
-							{
-								stdout: stdout,
-								stderr: stderr,
-							};
-							resolve( output );
-						} );
-					return;
-				} );
+								if ( error )
+								{
+									reject( error );
+									return;
+								}
+								let output = {
+									stdout: stdout,
+									stderr: stderr,
+								};
+								resolve( output );
+							} );
+						return;
+					} );
+			}
+			catch ( error )
+			{
+				result = {
+					stdout: null,
+					stderr: error.message,
+				};
+			}
 
 			// Redirect output.
-			if ( typeof Step.output !== 'undefined' )
+			if ( Step.output && result.stdout )
 			{
 				if ( Step.output === 'console' )
 				{
-					console.log( result.stdout );
+					Engine.Log.Print( result.stdout );
+				}
+				else if ( Step.output.startsWith( Engine.Settings.VariableDelimiters[ 0 ] )
+					&& Step.output.endsWith( Engine.Settings.VariableDelimiters[ 1 ] ) )
+				{
+					let ich0 = Engine.Settings.VariableDelimiters[ 0 ].length;
+					let ich1 = Step.output.length - ( Engine.Settings.VariableDelimiters[ 0 ].length + Engine.Settings.VariableDelimiters[ 1 ].length );
+					let name = Step.output.substring( ich0, ich1 );
+					Engine.Loose.SetObjectValue( Context, name, result.stdout );
 				}
 				else
 				{
@@ -67,11 +88,19 @@ Fields:
 			}
 
 			// Redirect errors.
-			if ( typeof Step.errors !== 'undefined' )
+			if ( Step.errors && result.stderr )
 			{
 				if ( Step.errors === 'console' )
 				{
-					console.log( result.stderr );
+					Engine.Log.Error( result.stderr );
+				}
+				else if ( Step.output.startsWith( Engine.Settings.VariableDelimiters[ 0 ] )
+					&& Step.output.endsWith( Engine.Settings.VariableDelimiters[ 1 ] ) )
+				{
+					let ich0 = Engine.Settings.VariableDelimiters[ 0 ].length;
+					let ich1 = Step.errors.length - ( Engine.Settings.VariableDelimiters[ 0 ].length + Engine.Settings.VariableDelimiters[ 1 ].length );
+					let name = Step.errors.substring( ich0, ich1 );
+					Engine.Loose.SetObjectValue( Context, name, result.stderr );
 				}
 				else
 				{
@@ -79,6 +108,7 @@ Fields:
 					LIB_FS.writeFileSync( filename, result.stderr, 'utf8' );
 				}
 			}
+			if ( Step.halt_on_error && result.stderr ) { return false; }
 
 			// Return, OK.
 			return true;

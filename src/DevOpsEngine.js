@@ -151,6 +151,7 @@ module.exports = function ( EngineSettings, Tasks )
 				try
 				{
 					Engine.Log.Indent();
+					Engine.Log.Muted( JSON.stringify( step ) );
 					let step_t0 = new Date();
 					let result = await command.Invoke( step[ command_name ], context );
 					let step_t1 = new Date();
@@ -160,7 +161,7 @@ module.exports = function ( EngineSettings, Tasks )
 					}
 					else
 					{
-						Engine.Log.Error( `RunTask: The step [${command_name}] returned false and halted the execution of task [${TaskName}].` );
+						Engine.Log.Error( `RunTask: The [${command_name}] command returned false and halted execution of the task [${TaskName}].` );
 					}
 					Engine.Log.Unindent();
 					if ( result === false ) { return false; }
