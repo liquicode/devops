@@ -21,5 +21,5 @@
       √ should return only max occurances
 
 
-  15 passing (11ms)
+  15 passing (14ms)
 

@@ -44,7 +44,12 @@ module.exports = {
 	npm_publish_version: [
 
 		// Update npmjs.com with new package.
-		{ $Shell: { command: 'npm publish . --access public' } },
+		{
+			$Shell: {
+				command: 'npm publish . --access public',
+				output: 'console', errors: 'console', halt_on_error: true
+			}
+		},
 
 	],
 
@@ -124,13 +129,13 @@ module.exports = {
 		},
 		{
 			$Shell: {
-				command: 'git commit -m "Initialization for v${Package.version}"',
+				command: 'git commit --quiet -m "Initialization for v${Package.version}"',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git push origin main',
+				command: 'git push --quiet origin main',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
