@@ -116,7 +116,7 @@ module.exports = {
 
 		// Increment and update the official package version.
 		{ $SemverInc: { context: 'Package.version' } },
-		{ $WriteJsonFile: { filename: 'package.json', context: 'Package' } },
+		{ $WriteJsonFile: { filename: 'package.json', context: 'Package', friendly: true } },
 
 		// Sync the version again.
 		{ $RunTask: { name: 'sync_version' } },
