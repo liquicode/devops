@@ -21,7 +21,8 @@ module.exports = {
 	],
 
 	sync_version: [
-		// Read the official package version.
+
+		// Read the package file.
 		{ $ReadJsonFile: { filename: 'package.json', context: 'Package' } },
 
 		// Update files with the current version.
@@ -40,10 +41,10 @@ module.exports = {
 
 	],
 
-	npm_publish: [
+	npm_publish_version: [
 
 		// Update npmjs.com with new package.
-		// { $Shell: { command: 'npm publish . --access public' } },
+		{ $Shell: { command: 'npm publish . --access public' } },
 
 	],
 
@@ -54,15 +55,10 @@ module.exports = {
 
 	],
 
-	new_version: [
+	git_publish_version: [
 
+		// Read the package file.
 		{ $ReadJsonFile: { filename: 'package.json', context: 'Package' } },
-
-		// Prepare to finalize the existing version.
-		{ $RunTask: { name: 'run_tests' } },
-		{ $RunTask: { name: 'build_docs' } },
-		{ $RunTask: { name: 'sync_version' } },
-		{ $RunTask: { name: 'update_aws_docs' } },
 
 		// Update github and finalize the version.
 		{
@@ -97,8 +93,20 @@ module.exports = {
 			}
 		},
 
-		// Update NPM with the new version.
-		{ $RunTask: { name: 'npm_publish' } },
+	],
+
+	new_version: [
+
+		// Read the package file.
+		{ $ReadJsonFile: { filename: 'package.json', context: 'Package' } },
+
+		// Finalize and publish the existing version.
+		{ $RunTask: { name: 'run_tests' } },
+		{ $RunTask: { name: 'build_docs' } },
+		{ $RunTask: { name: 'sync_version' } },
+		{ $RunTask: { name: 'update_aws_docs' } },
+		{ $RunTask: { name: 'git_publish_version' } },
+		// { $RunTask: { name: 'npm_publish_version' } },
 
 		// Increment and update the official package version.
 		{ $SemverInc: { context: 'Package.version' } },
