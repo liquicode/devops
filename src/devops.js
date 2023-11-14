@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict';
 
 const LIB_FS = require( 'fs' );

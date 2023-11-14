@@ -16,9 +16,7 @@
 		}
 	],
 	"main": "src/devops.js",
-	"bin": {
-		"devops": "src/devops.js"
-	},
+	"bin": "src/devops.js",
 	"files": [
 		"package.json",
 		"readme.md",
