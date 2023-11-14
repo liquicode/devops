@@ -47,7 +47,8 @@ module.exports = {
 		{
 			$Shell: {
 				command: 'npm publish . --access public',
-				output: 'console', errors: 'console', halt_on_error: true
+				// output: 'console', errors: 'console', halt_on_error: false
+				halt_on_error: false
 			}
 		},
 
