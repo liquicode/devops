@@ -2,7 +2,7 @@
 
 <hr>
 
-- jsongin Docs
+- devops Docs
 
 	- [readme.md](external/readme.md)
 
@@ -24,6 +24,6 @@
 
 - More Information
 
-	- [Testing Output](external/testing-output.md)
+	- [Testing Output](external/tests.md)
 	- [Software License](external/license.md)
 	- [Software Version](external/version.md)

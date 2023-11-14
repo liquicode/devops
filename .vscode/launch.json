@@ -5,7 +5,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "--- Devops ---------------------",
+			"name": "--- Devops Test ---------------------",
 		},
 		{
 			"name": "devops clear",
@@ -14,7 +14,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"cwd": "${workspaceFolder}",
+			"cwd": "${workspaceFolder}/build/dev",
 			"program": "${workspaceFolder}/src/devops.js",
 			"args": [
 				"clear"
@@ -29,7 +29,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"cwd": "${workspaceFolder}",
+			"cwd": "${workspaceFolder}/build/dev",
 			"program": "${workspaceFolder}/src/devops.js",
 			"args": [
 				"test"
@@ -38,19 +38,7 @@
 			"internalConsoleOptions": "openOnSessionStart",
 		},
 		{
-			"name": "devops sync_version",
-			"type": "node",
-			"request": "launch",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
-			"cwd": "${workspaceFolder}",
-			"program": "${workspaceFolder}/src/devops.js",
-			"args": [
-				"sync_version"
-			],
-			"outputCapture": "std",
-			"internalConsoleOptions": "openOnSessionStart",
+			"name": "--- Devops Production ---------------------",
 		},
 		{
 			"name": "devops run_tests",
@@ -59,7 +47,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"cwd": "${workspaceFolder}",
+			"cwd": "${workspaceFolder}/build/prod",
 			"program": "${workspaceFolder}/src/devops.js",
 			"args": [
 				"run_tests"
@@ -74,10 +62,55 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"cwd": "${workspaceFolder}",
+			"cwd": "${workspaceFolder}/build/prod",
 			"program": "${workspaceFolder}/src/devops.js",
 			"args": [
 				"build_docs"
+			],
+			"outputCapture": "std",
+			"internalConsoleOptions": "openOnSessionStart",
+		},
+		{
+			"name": "devops sync_version",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"cwd": "${workspaceFolder}/build/prod",
+			"program": "${workspaceFolder}/src/devops.js",
+			"args": [
+				"sync_version"
+			],
+			"outputCapture": "std",
+			"internalConsoleOptions": "openOnSessionStart",
+		},
+		{
+			"name": "devops update_aws_docs",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"cwd": "${workspaceFolder}/build/prod",
+			"program": "${workspaceFolder}/src/devops.js",
+			"args": [
+				"update_aws_docs"
+			],
+			"outputCapture": "std",
+			"internalConsoleOptions": "openOnSessionStart",
+		},
+		{
+			"name": "devops new_version",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"cwd": "${workspaceFolder}/build/prod",
+			"program": "${workspaceFolder}/src/devops.js",
+			"args": [
+				"new_version"
 			],
 			"outputCapture": "std",
 			"internalConsoleOptions": "openOnSessionStart",

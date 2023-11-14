@@ -2,6 +2,24 @@
 
 module.exports = {
 
+	run_tests: [
+
+		// Run tests and capture the output.
+		{ $Shell: { command: 'npx mocha -u bdd tests/*.js --timeout 0 --slow 10', output: 'tests.md' } },
+
+	],
+
+	build_docs: [
+
+		// Copy files to the docs external area.
+		{ $EnsureFolder: { folder: 'docs/external' } },
+		{ $CopyFile: { from: 'readme.md', to: 'docs/external/readme.md' } },
+		{ $CopyFile: { from: 'license.md', to: 'docs/external/license.md' } },
+		{ $CopyFile: { from: 'version.md', to: 'docs/external/version.md' } },
+		{ $CopyFile: { from: 'tests.md', to: 'docs/external/tests.md' } },
+
+	],
+
 	sync_version: [
 		// Read the official package version.
 		{ $ReadJsonFile: { filename: 'package.json', context: 'Package' } },
@@ -15,28 +33,10 @@ module.exports = {
 
 	],
 
-	run_tests: [
-
-		// Run tests and capture the output.
-		{ $Shell: { command: 'npx mocha -u bdd tests/*.js --timeout 0 --slow 10', output: 'tests-output.md' } },
-
-	],
-
-	build_docs: [
-
-		// Copy files to the docs external area.
-		{ $EnsureFolder: { folder: 'docs/external' } },
-		{ $CopyFile: { from: 'readme.md', to: 'docs/external/readme.md' } },
-		{ $CopyFile: { from: 'license.md', to: 'docs/external/license.md' } },
-		{ $CopyFile: { from: 'version.md', to: 'docs/external/version.md' } },
-		{ $CopyFile: { from: 'tests-output.md', to: 'docs/external/tests-output.md' } },
-
-	],
-
 	update_aws_docs: [
 
 		// Update aws s3 bucket with package docs.
-		// { $Shell: { command: 'set "AWS_PROFILE=admin" & aws s3 sync docs s3://jsongin.liquicode.com' } },
+		{ $Shell: { command: 'set "AWS_PROFILE=admin" & aws s3 sync docs s3://devops.liquicode.com' } },
 
 	],
 
@@ -65,12 +65,37 @@ module.exports = {
 		{ $RunTask: { name: 'update_aws_docs' } },
 
 		// Update github and finalize the version.
-		{ $Shell: { command: 'git add .', errors: 'console', halt_on_error: true } },
-		{ $Shell: { command: 'git commit -m "Finalization for v${Package.version}"', errors: 'console', halt_on_error: true } },
-		{ $Shell: { command: 'git push origin main', errors: 'console', halt_on_error: true } },
+		{
+			$Shell: {
+				command: 'git add .',
+				output: 'console', errors: 'console', halt_on_error: false
+			}
+		},
+		{
+			$Shell: {
+				command: 'git commit -m "Finalization for v${Package.version}"',
+				output: 'console', errors: 'console', halt_on_error: true
+			}
+		},
+		{
+			$Shell: {
+				command: 'git push origin main',
+				output: 'console', errors: 'console', halt_on_error: true
+			}
+		},
 		// Tag the existing version
-		{ $Shell: { command: 'git tag -a v${Package.version} -m "Version v${Package.version}"', errors: 'console', halt_on_error: true } },
-		{ $Shell: { command: 'git push origin v${Package.version}', errors: 'console', halt_on_error: true } },
+		{
+			$Shell: {
+				command: 'git tag -a v${Package.version} -m "Version v${Package.version}"',
+				output: 'console', errors: 'console', halt_on_error: true
+			}
+		},
+		{
+			$Shell: {
+				command: 'git push origin v${Package.version}',
+				output: 'console', errors: 'console', halt_on_error: true
+			}
+		},
 
 		// Update NPM with the new version.
 		{ $RunTask: { name: 'npm_publish' } },

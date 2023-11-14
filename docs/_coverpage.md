@@ -1,21 +1,20 @@
 <!-- _coverpage.md -->
 
-![logo](media/jsongin-banner-large.png)
+![logo](media/devops-banner-large.png)
 
-# jsongin <small>(v0.0.1)</small>
-
-<hr>
-
-> A JSON Engine for MongoDB-Style Queries and Data Structure Manipulation
+# devops <small>(v0.0.1)</small>
 
 <hr>
 
-- Full compatibility with MongoDB queries.
+> A utility for devops, CI/CD, and general automation.
+
+<hr>
+
+- Extensible
 - No external dependencies.
 - 100% pure javascript.
-- Single minified file (<25k) deployment for web.
 
-[GitHub](https://github.com/liquicode/jsongin)
+[GitHub](https://github.com/liquicode/devops)
 [Get Started](external/readme.md)
 
 
