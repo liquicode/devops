@@ -63,7 +63,7 @@ module.exports = {
 		// Update github and finalize the version.
 		{
 			$Shell: {
-				command: 'git add --quiet .',
+				command: 'git add .',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
@@ -82,7 +82,7 @@ module.exports = {
 		// Tag the existing version
 		{
 			$Shell: {
-				command: 'git tag --quiet -a v${Package.version} -m "Version v${Package.version}"',
+				command: 'git tag -a v${Package.version} -m "Version v${Package.version}"',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
