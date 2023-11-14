@@ -2,7 +2,7 @@
 
 ![logo](media/devops-banner-large.png)
 
-# devops <small>(v0.0.1)</small>
+# devops <small>(v0.0.2)</small>
 
 <hr>
 
