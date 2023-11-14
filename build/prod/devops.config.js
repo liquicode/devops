@@ -63,32 +63,32 @@ module.exports = {
 		// Update github and finalize the version.
 		{
 			$Shell: {
-				command: 'git add .',
+				command: 'git --quiet add .',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git commit -m "Finalization for v${Package.version}"',
+				command: 'git --quiet commit -m "Finalization for v${Package.version}"',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git push origin main',
+				command: 'git --quiet push origin main',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		// Tag the existing version
 		{
 			$Shell: {
-				command: 'git tag -a v${Package.version} -m "Version v${Package.version}"',
+				command: 'git --quiet tag -a v${Package.version} -m "Version v${Package.version}"',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git push origin v${Package.version}',
+				command: 'git --quiet push origin v${Package.version}',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
@@ -106,7 +106,7 @@ module.exports = {
 		{ $RunTask: { name: 'sync_version' } },
 		{ $RunTask: { name: 'update_aws_docs' } },
 		{ $RunTask: { name: 'git_publish_version' } },
-		// { $RunTask: { name: 'npm_publish_version' } },
+		{ $RunTask: { name: 'npm_publish_version' } },
 
 		// Increment and update the official package version.
 		{ $SemverInc: { context: 'Package.version' } },
