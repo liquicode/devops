@@ -74,26 +74,26 @@ module.exports = {
 		{
 			$Shell: {
 				command: 'git commit -m "Finalization for v${Package.version}"',
-				output: 'console', errors: 'console', halt_on_error: true
+				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
 				command: 'git push origin main',
-				output: 'console', errors: 'console', halt_on_error: true
+				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		// Tag the existing version
 		{
 			$Shell: {
 				command: 'git tag -a v${Package.version} -m "Version v${Package.version}"',
-				output: 'console', errors: 'console', halt_on_error: true
+				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
 				command: 'git push origin v${Package.version}',
-				output: 'console', errors: 'console', halt_on_error: true
+				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 
