@@ -63,32 +63,32 @@ module.exports = {
 		// Update github and finalize the version.
 		{
 			$Shell: {
-				command: 'git --quiet add .',
+				command: 'git add --quiet .',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git --quiet commit -m "Finalization for v${Package.version}"',
+				command: 'git commit --quiet -m "Finalization for v${Package.version}"',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git --quiet push origin main',
+				command: 'git push --quiet origin main',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		// Tag the existing version
 		{
 			$Shell: {
-				command: 'git --quiet tag -a v${Package.version} -m "Version v${Package.version}"',
+				command: 'git tag --quiet -a v${Package.version} -m "Version v${Package.version}"',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
 		{
 			$Shell: {
-				command: 'git --quiet push origin v${Package.version}',
+				command: 'git push --quiet origin v${Package.version}',
 				output: 'console', errors: 'console', halt_on_error: false
 			}
 		},
