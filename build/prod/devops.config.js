@@ -108,9 +108,24 @@ module.exports = {
 		{ $RunTask: { name: 'sync_version' } },
 
 		// Update github with the new version.
-		{ $Shell: { command: 'git add .', errors: 'console', halt_on_error: true } },
-		{ $Shell: { command: 'git commit -m "Initialization for v${Package.version}"', errors: 'console', halt_on_error: true } },
-		{ $Shell: { command: 'git push origin main', errors: 'console', halt_on_error: true } },
+		{
+			$Shell: {
+				command: 'git add .',
+				output: 'console', errors: 'console', halt_on_error: false
+			}
+		},
+		{
+			$Shell: {
+				command: 'git commit -m "Initialization for v${Package.version}"',
+				output: 'console', errors: 'console', halt_on_error: false
+			}
+		},
+		{
+			$Shell: {
+				command: 'git push origin main',
+				output: 'console', errors: 'console', halt_on_error: false
+			}
+		},
 
 	],
 
