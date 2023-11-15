@@ -57,14 +57,15 @@ if ( !Parameters.package_filename )
 Parameters.package = require( Parameters.package_filename );
 Parameters.package_folder = LIB_PATH.dirname( Parameters.package_filename );
 
+console.log( `@liquicode/devops is running in [${Parameters.package_folder}].` );
 
 //---------------------------------------------------------------------
 // Load the tasks file.
 function locate_tasks_file( Path )
 {
-	let filename = LIB_PATH.join( Path, 'devops.config.json' );
+	let filename = LIB_PATH.join( Path, 'devops.tasks.json' );
 	if ( LIB_FS.existsSync( filename ) ) { return filename; }
-	filename = LIB_PATH.join( Path, 'devops.config.js' );
+	filename = LIB_PATH.join( Path, 'devops.tasks.js' );
 	if ( LIB_FS.existsSync( filename ) ) { return filename; }
 	return null;
 }
@@ -72,7 +73,12 @@ if ( !Parameters.tasks_filename ) { Parameters.tasks_filename = locate_tasks_fil
 if ( !Parameters.tasks_filename ) { Parameters.tasks_filename = locate_tasks_file( Parameters.package_folder ); }
 if ( !Parameters.tasks_filename )
 {
-	throw new Error( `Unable to find a devops tasks file.` );
+	throw new Error( `Unable to find a devops.tasks.json file.` );
+}
+Parameters.tasks_filename = LIB_PATH.resolve( Parameters.tasks_filename );
+if ( !LIB_FS.existsSync( Parameters.tasks_filename ) )
+{
+	throw new Error( `Unable to find the file [${Parameters.tasks_filename}].` );
 }
 Parameters.tasks = require( Parameters.tasks_filename );
 
