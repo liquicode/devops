@@ -199,7 +199,7 @@ module.exports = function ( EngineSettings, Tasks )
 
 	//---------------------------------------------------------------------
 	// Load the standard commands.
-	Engine.LoadCommands( LIB_PATH.join( __dirname, 'Commands' ), true );
+	Engine.LoadCommands( LIB_PATH.join( __dirname, '../Commands' ), true );
 	// Load the user commands.
 	if ( Engine.Settings.CommandPath )
 	{

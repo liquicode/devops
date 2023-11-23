@@ -85,7 +85,7 @@
 			"args": [
 				"-u",
 				"bdd",
-				"tests/100*.js",
+				"test/100*.js",
 				"--timeout",
 				"0",
 				"--slow",
@@ -110,7 +110,7 @@
 			"args": [
 				"-u",
 				"bdd",
-				"tests/*.js",
+				"test/*.js",
 				"--timeout",
 				"0",
 				"--slow",

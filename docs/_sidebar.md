@@ -10,20 +10,17 @@
 
 - References
 
-	- [Library Guide](docs/guides/jsongin%20Library%20Guide.md)
-	- [Data Types](docs/guides/jsongin%20Data%20Types.md)
-	- [Query Reference](docs/guides/jsongin%20Query%20Reference.md)
 
 <hr>
 
 - Examples
 
 
-
 <hr>
 
 - More Information
 
+	- [Project History](external/history.md)
 	- [Testing Output](external/tests.md)
 	- [Software License](external/license.md)
 	- [Software Version](external/version.md)

@@ -1,14 +1,14 @@
 'use strict';
 
 const assert = require( 'assert' );
-const devops = require( '../src/DevOpsEngine' )( {}, {} );
+const devops = require( '../src/Engine/DevOpsEngine' )( {}, {} );
 
 describe( '100) Initialization Tests', () =>
 {
 
 	describe( 'CommandLine', () =>
 	{
-		const CommandLine = require( '../src/CommandLine' )();
+		const CommandLine = require( '../src/Engine/CommandLine' )();
 
 		it( 'should process an empty command line', () => 
 		{

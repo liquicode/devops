@@ -4,8 +4,8 @@
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
 
-const COMMAND_LINE = require( './CommandLine' )();
-const DEVOPS = require( './DevOpsEngine' );
+const COMMAND_LINE = require( './Engine/CommandLine' )();
+const DEVOPS = require( './Engine/DevOpsEngine' );
 
 //---------------------------------------------------------------------
 // Get Command Line arguments.
@@ -25,6 +25,7 @@ if ( !Parameters.package_filename && ProcessArgs.p ) { Parameters.package_filena
 // tasks_filename
 if ( !Parameters.tasks_filename && ProcessArgs.tasks_filename ) { Parameters.tasks_filename = ProcessArgs.tasks_filename; }
 if ( !Parameters.tasks_filename && ProcessArgs.tasks ) { Parameters.tasks_filename = ProcessArgs.tasks; }
+if ( !Parameters.tasks_filename && ProcessArgs.t ) { Parameters.tasks_filename = ProcessArgs.t; }
 // task_name
 if ( !Parameters.task_name && ProcessArgs.task ) { Parameters.task_name = ProcessArgs.task; }
 if ( !Parameters.task_name && ProcessArgs.positional.length )

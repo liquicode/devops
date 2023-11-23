@@ -47,7 +47,9 @@
 		"automation"
 	],
 	"scripts": {
-		"test": "mocha -u bdd tests/*.js --timeout 0 --slow 10 --colors"
+		"test": "mocha -u bdd test/*.js --timeout 0 --slow 10 --colors",
+		"publish version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js publish_version",
+		"start new version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js start_new_version"
 	},
 	"devDependencies": {
 		"mocha": "^10.2.0"
