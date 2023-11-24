@@ -116,7 +116,7 @@ module.exports = {
 		{ $RunTask: { name: 'run_tests' } },
 		{ $RunTask: { name: 'sync_version' } },
 		{ $RunTask: { name: 'build_docs' } },
-		{ $RunTask: { name: 'run_webpack' } },
+		// { $RunTask: { name: 'run_webpack' } },
 		{ $RunTask: { name: 'update_aws_docs' } },
 		{ $RunTask: { name: 'git_publish_version' } },
 		{ $RunTask: { name: 'npm_publish_version' } },

@@ -1,6 +1,6 @@
 {
 	"name": "@liquicode/devops",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"description": "A utility for devops, CI/CD, and general automation.",
 	"license": "MIT",
 	"homepage": "http://devops.liquicode.com",
