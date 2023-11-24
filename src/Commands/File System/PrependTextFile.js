@@ -36,7 +36,7 @@ Fields:
 				content = LIB_FS.readFileSync( filename, 'utf8' );
 			}
 			content = value + content;
-			LIB_FS.WriteFileSync( filename, content, 'utf8' );
+			LIB_FS.writeFileSync( filename, content, 'utf8' );
 			return true;
 		},
 

@@ -52,7 +52,9 @@
 		"start new version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js start_new_version"
 	},
 	"devDependencies": {
-		"mocha": "^10.2.0"
+		"mocha": "^10.2.0",
+		"webpack": "^5.89.0",
+		"webpack-cli": "^5.1.4"
 	},
 	"dependencies": {}
 }
