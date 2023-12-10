@@ -1,6 +1,6 @@
 {
 	"name": "@liquicode/devops",
-	"version": "0.0.13",
+	"version": "0.0.14",
 	"description": "A utility for devops, CI/CD, and general automation.",
 	"license": "MIT",
 	"homepage": "http://devops.liquicode.com",
@@ -54,7 +54,10 @@
 	"devDependencies": {
 		"mocha": "^10.2.0",
 		"webpack": "^5.89.0",
-		"webpack-cli": "^5.1.4"
+		"webpack-cli": "^5.1.4",
+		"webpack-node-externals": "^3.0.0"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"@liquicode/jsongin": ""
+	}
 }

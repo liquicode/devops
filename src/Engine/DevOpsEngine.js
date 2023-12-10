@@ -124,7 +124,13 @@ module.exports = function ( EngineSettings, Tasks )
 		let context = {};
 		if ( ( typeof Context === 'object' ) && ( Context !== null ) && !Array.isArray( Context ) )
 		{
+			// Use the supplied context.
 			context = Context;
+		}
+		else if ( typeof Engine.Tasks.Context !== 'undefined' )
+		{
+			// Use the task file's context.
+			context = JSON.parse( JSON.stringify( Engine.Tasks.Context ) );
 		}
 
 		// Get the current working directory.
@@ -157,7 +163,7 @@ module.exports = function ( EngineSettings, Tasks )
 					let step_t1 = new Date();
 					if ( result === true )
 					{
-						Engine.Log.Muted( `${command_name} OK, ${step_t1 - step_t0} ms.` );
+						Engine.Log.Muted( `Step Completed: ${command_name} OK, ${step_t1 - step_t0} ms.` );
 					}
 					else
 					{
@@ -179,7 +185,7 @@ module.exports = function ( EngineSettings, Tasks )
 			}
 			Engine.Log.Unindent();
 			let task_t1 = new Date();
-			Engine.Log.Muted( `${TaskName} OK, ${task_t1 - task_t0} ms.` );
+			Engine.Log.Muted( `Task Completed: ${TaskName} OK, ${task_t1 - task_t0} ms.` );
 
 			// Return, OK.
 			return true;

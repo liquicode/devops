@@ -78,7 +78,7 @@ module.exports = function ()
 			if ( Backcolor ) { formatted += Backcolor + ';'; }
 			if ( Forecolor ) { formatted += Forecolor + ';'; }
 			if ( Effect ) { formatted += Effect + ';'; }
-			formatted = formatted.substr( 0, formatted.length - 1 ) + 'm';
+			formatted = formatted.substring( 0, formatted.length - 1 ) + 'm';
 			formatted += Text;
 			formatted += `\x1B[${ShellColors.ShellEffect.UnsetAll}m`;
 			return formatted;
