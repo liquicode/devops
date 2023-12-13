@@ -12,10 +12,10 @@ module.exports = function ( Engine )
 		//---------------------------------------------------------------------
 		CommandName: '$ExecuteJs',
 		CommandHelp: `$ExecuteJs:
-Executes Javascript code given as a string or a file.
-The code is essentially require'ed into the task and has full access to all of the nodejs functions.
+Executes Javascript code within a string or a file.
+The code is essentially require'ed (or eval'ed) into the task and has full access to all of the nodejs functions.
 This can be extremely unsafe but it also gives you much more flexibility.
-The Javascript code will have access to the Task Context and be able to modify it.
+The Javascript code will have access to the Task Context (as 'Context') and be able to modify it.
 
 Fields:
 - code_file: The path to a Javascript file to load and execute.
@@ -51,20 +51,29 @@ Fields:
 			let result = null;
 			if ( Step.use_eval )
 			{
-				const Context = Context;
-				result = eval( code_string );
+				result = eval( script );
 			}
 			else
 			{
-				code_string = `"use strict"; module.exports = function( Context ){ ${code_string} };`;
-				let filename = Engine.Loose.TempFilename( 'js' );
-				LIB_FS.writeFileSync( filename, code_string );
-				result = require( filename )( Context );
-				LIB_FS.unlinkSync( filename );
+				let filename = `${Engine.Loose.UUID()}.js`;
+				filename = Engine.ResolvePath( Context, filename );
+				LIB_FS.writeFileSync( filename, `module.exports = function( Context ){ ${script} };` );
+				try
+				{
+					result = require( filename )( Context, Output );
+				}
+				catch ( error )
+				{
+					throw error;
+				}
+				finally
+				{
+					LIB_FS.unlinkSync( filename );
+				}
 			}
 
 			// Store the result in the Context.
-			if ( Step.out_context )
+			if ( Step.out_context && ( typeof result !== 'undefined' ) )
 			{
 				Engine.Loose.SetObjectValue( Context, Step.out_context, result );
 			}

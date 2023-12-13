@@ -63,16 +63,21 @@ Commands
 
 ### Context Commands
 
-- `$PrintContext: { context: 'variable-name' }`
-- `$SetContext: { context: 'variable-name', value: <value> }`
-- `$SemverInc: { context: 'variable-name' }`
+- `$PrintContext { context: 'variable-name' }`
+
+- `$SetContext { context: 'variable-name', value: <any> }`
+
+- `$SemverInc:{ context: 'variable-name' }`
 
 
 ### File System Commands
 
 ***Folders***
-- `$EnsureFolder`
-- `$ClearFolder`
+
+- `$EnsureFolder { folder: <string> }` :
+  Makes sure that the specified folder exists. Creates the folder if needed.
+
+- `$ClearFolder { folder: <string>, recurse: <boolean>, remove_folders: <boolean> }` :
 - `$RemoveFolder`
 - `$CopyFolder`
 
