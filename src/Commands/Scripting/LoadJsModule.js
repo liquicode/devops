@@ -8,13 +8,12 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$ReadJsonFile',
-		CommandHelp: `$ReadJsonFile:
-Reads the contents of a json file or field into a context variable.
+		CommandName: '$LoadJsModule',
+		CommandHelp: `$LoadJsModule:
+Loads (requires) a Javascript module (.js) file into a context variable.
 Fields:
-- filename: The json file to read.
-- context: The context variable to store the json value in.
-- field: (optional) The name of the field in the json object to store in the context. If empty, the entire object is stored.
+- filename: The Javascript module file to read.
+- context: The context variable to store the Javascript module in.
 `,
 
 
@@ -25,11 +24,7 @@ Fields:
 			if ( typeof Step.filename === 'undefined' ) { throw new Error( `${Command.CommandName}: The "filename" field is required.` ); }
 			if ( typeof Step.context === 'undefined' ) { throw new Error( `${Command.CommandName}: The "context" field is required.` ); }
 			let filename = Engine.ResolvePath( Context, Step.filename );
-			let value = JSON.parse( LIB_FS.readFileSync( filename, 'utf8' ) );
-			if ( typeof Step.field !== 'undefined' )
-			{
-				value = Engine.Loose.GetObjectValue( value, Step.field );
-			}
+			let value = require( filename );
 			let result = Engine.Loose.SetObjectValue( Context, Step.context, value );
 			if ( result === false ) { return false; }
 			return true;

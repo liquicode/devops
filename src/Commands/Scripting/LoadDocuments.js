@@ -10,17 +10,18 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$ScanDocuments',
-		CommandHelp: `$ScanDocuments:
+		CommandName: '$LoadDocuments',
+		CommandHelp: `$LoadDocuments:
 Scans document (text) files in a path, loading any front-matter and content into an array of content objects.
 Front-matter is an object definition embedded within a document and appears at the start of the document.
 Each content object contains the path of a file, any front-matter contained within the file, and the remaining text content of the file.
+
 Fields:
 - context: The context variable to store the array of content objects.
 - path: The path of files to read.
 - extensions: Array of file extensions (e.g. '.txt') to include. Leave empty for all files.
-- front_matter_start: Token to dileate the beginning of front-matter section. Defaults to "---", set to empty to disable front-matter scanning.
-- front_matter_end: Token to dileate the end of front-matter section. Defaults to "---".
+- front_matter_start: Token to delineate the beginning of front-matter section. Defaults to "---", set to empty to disable front-matter scanning.
+- front_matter_end: Token to delineate the end of front-matter section. Defaults to "---".
 `,
 
 

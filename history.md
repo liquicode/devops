@@ -8,8 +8,10 @@
 v0.0.14
 ---------------------------------------------------------------------
 
-- Added Command: $ScanDocuments
-- Added Command: $ProcessDocuments
+- Added Document Processing Commands:
+	- $LoadJsModule
+	- $ScanDocuments
+	- $ProcessDocuments
 - Added Command: $CopyFolder
 - Added Context section of the Tasks file.
 

@@ -1,6 +1,21 @@
 'use strict';
 
 
+const LIB_OS = require( 'os' );
+const LIB_FS = require( 'fs' );
+const LIB_PATH = require( 'path' );
+const LIB_CRYPTO = require( 'crypto' );
+
+
+//---------------------------------------------------------------------
+function TempFilename( Extension )
+{
+	let filename = `temp.${LIB_CRYPTO.randomBytes( 6 ).readUIntLE( 0, 6 ).toString( 36 )}.${Extension}`;
+	filename = LIB_PATH.join( LIB_OS.tmpdir(), filename );
+	return filename;
+}
+
+
 //---------------------------------------------------------------------
 function FindAllBetween( Text, StartText, EndText, Options ) 
 {
@@ -160,10 +175,13 @@ function SetObjectValue( Document, Path, Value )
 }
 
 
+//---------------------------------------------------------------------
 module.exports = {
+	TempFilename: TempFilename,
 	FindAllBetween: FindAllBetween,
 	// FindBetween: FindBetween,
 	// ReplaceBetween: ReplaceBetween,
 	GetObjectValue: GetObjectValue,
+	SetObjectValue: SetObjectValue,
 	SetObjectValue: SetObjectValue,
 };

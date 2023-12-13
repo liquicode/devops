@@ -2,7 +2,7 @@
 
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
-const jsongin = require( '@liquicode/jsongin' )();
+// const jsongin = require( '@liquicode/jsongin' )();
 
 module.exports = function ( Engine )
 {
@@ -19,14 +19,20 @@ Javascript code contained in the "functions" folder will be inserted into the ex
 Scans document (text) files in a path, loading any front-matter and content into an array of content objects.
 Front-matter is an object definition embedded within a document and appears at the start of the document.
 Each content object contains the path of a file, any front-matter contained within the file, and the remaining text content of the file.
+
+Difference from real ejs (https://github.com/mde/ejs):
+- Executes ejs code using "require()" rather than "eval()".
+  This approach is much less safe but it does give you full flexibility within your ejs code.
+  For example, you can access any nodejs library by require'ing it in your ejs code.
+- Introduces a new ejs operator "<%." which marks the entire rest of the line as ejs code and does not require an ending "%>"
+
 Fields:
 - context: The Context variable containing an array of content objects returned from ScanDocuments().
 - output_path: The path to generate files into.
 - include_path: The path to js files to load when executing embedded js. Defaults to empty.
-- embedded_js_start: Token to dileate the beginning of an embedded js section. Defaults to "<!-- js", set to empty to disable embedded js.
-- embedded_js_immediate: Token to indicate that the code should be executed in immediate mode and its output be inserted into the document.
-Must appear directly after the start token. Defaults to "=".
-- embedded_js_end: Token to dileate the end of an embedded js section. Defaults to "-->".
+- embedded_js_start: Token to delineate the beginning of an embedded js section. Defaults to "<%", set to empty to disable embedded js.
+- embedded_js_end: Token to delineate the end of an embedded js section. Defaults to "%>".
+- downgrade_eval: Forces the processor to revert back to using "eval()" for ejs execution.
 `,
 
 
@@ -38,9 +44,11 @@ Must appear directly after the start token. Defaults to "=".
 			if ( typeof Step.context !== 'string' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field must be a string.` ); }
 			if ( typeof Step.output_path === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "output_path" field is required.` ); }
 			if ( typeof Step.include_path === 'undefined' ) { Step.include_path = ''; }
-			if ( typeof Step.embedded_js_start === 'undefined' ) { Step.embedded_js_start = '<!-- js'; }
-			if ( typeof Step.embedded_js_immediate === 'undefined' ) { Step.embedded_js_immediate = '='; }
-			if ( typeof Step.embedded_js_end === 'undefined' ) { Step.embedded_js_end = '-->'; }
+			if ( typeof Step.embedded_js_start === 'undefined' ) { Step.embedded_js_start = '<%'; }
+			if ( typeof Step.embedded_js_end === 'undefined' ) { Step.embedded_js_end = '%>'; }
+
+			let output_path = Engine.ResolvePath( Context, Step.output_path );
+			let include_path = Engine.ResolvePath( Context, Step.include_path );
 
 			// Get the document contents.
 			let Documents = Engine.Loose.GetObjectValue( Context, Step.context );
@@ -61,10 +69,9 @@ Must appear directly after the start token. Defaults to "=".
 			};
 
 			// Prepare the execution context.
-			let ExecutionTemplate = 'module.exports = function( jsongin, Documents, Output ) {\n';
-			if ( Step.include_path )
+			let execution_template = 'module.exports = function( Context, Documents, Output ) {\n';
+			if ( include_path )
 			{
-				let include_path = Engine.ResolvePath( Context, Step.include_path );
 				if ( LIB_FS.existsSync( include_path ) )
 				{
 					LIB_FS.readdirSync( include_path ).forEach(
@@ -74,20 +81,20 @@ Must appear directly after the start token. Defaults to "=".
 							{
 								let path = LIB_PATH.join( include_path, filename );
 								let script = LIB_FS.readFileSync( path, 'utf8' );
-								ExecutionTemplate += '\n// Include From: ' + path + '\n';
-								ExecutionTemplate += script + '\n';
+								execution_template += '\n// Include From: ' + path + '\n';
+								execution_template += script + '\n';
 							}
 						} );
 				}
 			}
 
 			// Prepare the output folder.
-			if ( LIB_FS.existsSync( OUT_PATH ) )
+			if ( LIB_FS.existsSync( output_path ) )
 			{
-				LIB_FS.rmSync( OUT_PATH, { recursive: true, force: true } );
-				// LIB_FS.rmdirSync( OUT_PATH, { recursive: true, force: true } );
+				LIB_FS.rmSync( output_path, { recursive: true, force: true } );
+				// LIB_FS.rmdirSync( output_path, { recursive: true, force: true } );
 			}
-			LIB_FS.mkdirSync( OUT_PATH, { recursive: true } );
+			LIB_FS.mkdirSync( output_path, { recursive: true } );
 
 			// Process each document.
 			let document_count = 0;
@@ -95,28 +102,28 @@ Must appear directly after the start token. Defaults to "=".
 			{
 				let document = Documents[ document_index ];
 				if ( !document.content ) { continue; }
-				Output.path = LIB_PATH.join( OUT_PATH, document.path );
+				Output.path = LIB_PATH.join( output_path, document.path );
 				if ( !LIB_FS.existsSync( LIB_PATH.dirname( Output.path ) ) )
 				{
 					let folder = LIB_PATH.dirname( Output.path );
 					LIB_FS.mkdirSync( folder, { recursive: true } );
 				}
 				let content = document.content;
-				while ( content.indexOf( EMBEDDED_JS_START ) >= 0 )
+				while ( content.indexOf( Step.embedded_js_start ) >= 0 )
 				{
-					let ich = content.indexOf( EMBEDDED_JS_START );
+					let ich = content.indexOf( Step.embedded_js_start );
 					Output.print( content.substr( 0, ich ) );
-					content = content.substr( ich + EMBEDDED_JS_START.length );
+					content = content.substr( ich + Step.embedded_js_start.length );
 					let is_inline = false;
-					if ( content.startsWith( EMBEDDED_JS_IMMEDIATE ) )
+					if ( content.startsWith( Step.embedded_js_immediate ) )
 					{
 						is_inline = true;
-						content = content.substr( EMBEDDED_JS_IMMEDIATE.length );
+						content = content.substr( Step.embedded_js_immediate.length );
 					}
 					content = content.trim();
-					ich = content.indexOf( EMBEDDED_JS_END );
+					ich = content.indexOf( Step.embedded_js_end );
 					if ( ich < 0 ) { ich = content.length; }
-					let script = ExecutionTemplate;
+					let script = execution_template;
 					let code = content.substr( 0, ich ).trim();
 					if ( is_inline )
 					{
@@ -129,9 +136,9 @@ Must appear directly after the start token. Defaults to "=".
 					script += "\n};";
 					let script_filename = `${Output.path}.${Math.random()}.js`;
 					LIB_FS.writeFileSync( script_filename, script );
-					require( script_filename )( jsongin, Documents, Output );
+					require( script_filename )( Context, Documents, Output );
 					LIB_FS.unlinkSync( script_filename );
-					content = content.substr( ich + EMBEDDED_JS_END.length );
+					content = content.substr( ich + Step.embedded_js_end.length );
 				}
 				Output.print( content );
 				document_count++;

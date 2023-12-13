@@ -7,6 +7,7 @@ const LIB_PATH = require( 'path' );
 //---------------------------------------------------------------------
 module.exports = function ( EngineSettings, Tasks )
 {
+	if ( typeof EngineSettings.PackageFolder === 'undefined' ) { throw new Error( `devops: The "Settings.PackageFolder" field must exist.` ); }
 	if ( typeof EngineSettings.CommandPath === 'undefined' ) { EngineSettings.CommandPath = null; }
 	if ( typeof EngineSettings.LogSettings === 'undefined' ) { EngineSettings.LogSettings = {}; }
 	if ( typeof EngineSettings.VariableDelimiters === 'undefined' ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
