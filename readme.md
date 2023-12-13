@@ -74,6 +74,7 @@ Commands
 - `$EnsureFolder`
 - `$ClearFolder`
 - `$RemoveFolder`
+- `$CopyFolder`
 
 ***Files***
 - `$CopyFile`
@@ -97,9 +98,17 @@ Commands
 - `$RunTask`
 
 
-### Process Commands
+### Command Processes
 
 - `$Shell`
+
+
+### Scripting Commands
+
+- `$LoadJsModule`
+- `$LoadDocuments`
+- `$ExecuteJs`
+- `$ExecuteEjs`
 
 
 Examples

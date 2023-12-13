@@ -8,9 +8,20 @@ const LIB_CRYPTO = require( 'crypto' );
 
 
 //---------------------------------------------------------------------
+function UUID( ByteCount = 6 )
+{
+	let id = ( new Date() ).getTime();
+	id += '.';
+	if ( ByteCount > 6 ) { ByteCount = 6; }
+	id += LIB_CRYPTO.randomBytes( ByteCount ).readUIntLE( 0, ByteCount ).toString( 36 );
+	return id;
+}
+
+
+//---------------------------------------------------------------------
 function TempFilename( Extension )
 {
-	let filename = `temp.${LIB_CRYPTO.randomBytes( 6 ).readUIntLE( 0, 6 ).toString( 36 )}.${Extension}`;
+	let filename = `temp.${UUID()}.${Extension}`;
 	filename = LIB_PATH.join( LIB_OS.tmpdir(), filename );
 	return filename;
 }
@@ -177,6 +188,7 @@ function SetObjectValue( Document, Path, Value )
 
 //---------------------------------------------------------------------
 module.exports = {
+	UUID: UUID,
 	TempFilename: TempFilename,
 	FindAllBetween: FindAllBetween,
 	// FindBetween: FindBetween,

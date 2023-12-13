@@ -5,15 +5,22 @@
 # Project History
 
 
+v0.0.15
+---------------------------------------------------------------------
+
+- Added Scripting Commands:
+	- $LoadJsModule
+	- $LoadDocuments
+	- $ExecuteJs
+	- $ExecuteEjs
+- Added Command: $CopyFolder
+- Added Context section of the Tasks file.
+
+
 v0.0.14
 ---------------------------------------------------------------------
 
-- Added Document Processing Commands:
-	- $LoadJsModule
-	- $ScanDocuments
-	- $ProcessDocuments
-- Added Command: $CopyFolder
-- Added Context section of the Tasks file.
+- Not published.
 
 
 v0.0.13
