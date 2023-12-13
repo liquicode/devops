@@ -66,8 +66,7 @@ function parse_ejs_sections( Engine, Context, Filename, Script, EjsStart, EjsEnd
 			{
 				// read to end of line
 				ich1 = Script.indexOf( '\n', ich );
-				// ich1 = Script.indexOf( '\r', ich );
-				// if ( ich1 < 0 ) { ich1 = Script.indexOf( '\n', ich ); }
+				if ( ich1 < 0 ) { ich1 = Script.indexOf( '\r', ich ); }
 				if ( ich1 < 0 ) { ich1 = Script.length; }
 				sections.push( {
 					file: Filename,
@@ -76,6 +75,11 @@ function parse_ejs_sections( Engine, Context, Filename, Script, EjsStart, EjsEnd
 					end_modifiers: '',
 					text: Script.substring( ich, ich1 ),
 				} );
+				// sections.push( {
+				// 	file: Filename,
+				// 	type: 'text',
+				// 	text: '\n',
+				// } );
 				ich = ich1 + 1;
 				continue;
 			}
@@ -108,9 +112,10 @@ function parse_ejs_sections( Engine, Context, Filename, Script, EjsStart, EjsEnd
 		if ( section.type === 'code' )
 		{
 			section.text = section.text.trim();
-			if ( section.text.startsWith( 'include(' ) )
+			if ( section.text.startsWith( 'include(' ) && section.text.endsWith( ')' ) )
 			{
-				let include_filename = Engine.Loose.FindBetween( section.text, 'include(', ')' );
+				let include_filename = section.text.substring( 8, section.text.length - 1 );
+				include_filename = include_filename.trim();
 				if ( include_filename )
 				{
 					include_filename = Engine.ResolvePath( Context, include_filename );
@@ -118,7 +123,7 @@ function parse_ejs_sections( Engine, Context, Filename, Script, EjsStart, EjsEnd
 					let include_sections = parse_ejs_sections( Engine, Context, include_filename, include_script, EjsStart, EjsEnd );
 					if ( include_sections && include_sections.length )
 					{
-						sections.splice( section_index, 1, include_sections );
+						sections.splice( section_index, 1, ...include_sections );
 						section_index += ( include_sections.length - 1 );
 					}
 				}
