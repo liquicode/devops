@@ -2,25 +2,29 @@
 
 module.exports = {
 
+	Context: {
+		TempFolder: 'test/~temp',
+		DataFolder: 'test/data',
+	},
+
 	clear: [
 
-		{ $ClearFolder: { folder: '~temp/docs2', recursive: true } },
-		{ $RemoveFolder: { folder: '~temp/docs2' } },
+		{ $ClearFolder: { folder: '${TempFolder}', recursive: true } },
+		// { $RemoveFolder: { folder: '${TempFolder}' } },
 
 	],
 
 	test: [
 
 		// { $Shell: { command: 'dir foo', output: 'console', errors: 'console', halt_on_error: false } },
-		{ $RunTask: { name: 'clear' } },
-		{ $EnsureFolder: { folder: '~temp/docs2' } },
-		{ $CopyFile: { from: '~temp/docs1/readme.md', to: '~temp/docs2/readme.md' } },
-		{ $Shell: { command: 'dir', output: '~temp/docs2/dir-output.txt' } },
-		{ $ReadJsonFile: { filename: 'package.json', context: 'Package' } },
+		{ $RunTask: { task: 'clear' } },
+		{ $CopyFile: { from: '${DataFolder}/docs/license.md', to: '${TempFolder}/docs/license.md' } },
+		{ $Shell: { command: 'dir ${DataFolder}', halt_on_error: false, out: { console: true, filename: '${TempFolder}/docs/dir-output.txt' }, err: { console: true } } },
+		{ $ReadJsonFile: { filename: 'package.json', out: { context: 'Package' } } },
 		{ $SemverInc: { context: 'Package.version' } },
-		{ $ReplaceFileText: { filename: '~temp/docs2/readme.md', start_text: 'v(', end_text: ')', value: '${Package.version}' } },
-		{ $WriteTextFile: { filename: '~temp/docs2/version.md', value: '${Package.version}' } },
-		{ $WriteJsonFile: { filename: '~temp/docs2/package.json', context: 'Package', friendly: true } },
+		// { $ReplaceFileText: { filename: '~temp/docs2/readme.md', start_text: 'v(', end_text: ')', value: '${Package.version}' } },
+		{ $PrintContext: { context: 'Package.version', out: { console: true, filename: '${TempFolder}/docs/version.md' } } },
+		{ $PrintContext: { context: 'Package', out: { as: 'json-friendly', filename: '${TempFolder}/docs/package.json' } } },
 
 	],
 

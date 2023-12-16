@@ -9,20 +9,21 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$ClearFolder',
-		CommandHelp: `$ClearFolder:
-Removes all files from the specified folder.
-Fields:
-- folder: The folder to remove files from.
-- recurse: If true, removes all files in sub-folders as well.
-- remove_folders: If true, removes all sub-folders as well.
-`,
+		Meta: {
+			Category: 'File System',
+			CommandName: '$ClearFolder',
+			CommandHelp: `Removes all files from a folder.`,
+			CommandFields: [
+				{ name: 'folder', type: 's', description: `The folder to remove files from.` },
+				{ name: 'recurse', type: 'b', default: false, description: `If true, removes all sub-folders and files as well.` },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
 			function r_ClearFolder( Context, Path )
 			{
 				if ( LIB_FS.existsSync( Path ) === false ) { return true; }
@@ -43,7 +44,7 @@ Fields:
 				}
 				return true;
 			}
-			if ( typeof Step.folder === 'undefined' ) { throw new Error( `${Command.CommandName}: The "folder" field is required.` ); }
+			if ( typeof Step.folder === 'undefined' ) { throw new Error( `The "folder" field is required.` ); }
 			let path = Engine.ResolvePath( Context, Step.folder );
 			let result = r_ClearFolder( Context, path );
 			if ( result === false ) { return false; }

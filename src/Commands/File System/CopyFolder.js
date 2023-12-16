@@ -9,24 +9,26 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$CopyFolder',
-		CommandHelp: `$CopyFolder:
-Copies a folder and its contents from one path to another.
-Fields:
-- from: The folder to copy from.
-- to: The destination path of the copied folder.
-`,
+		Meta: {
+			Category: 'File System',
+			CommandName: '$CopyFolder',
+			CommandHelp: `Copies a folder and its contents from one path to another.`,
+			CommandFields: [
+				{ name: 'from', type: 's', description: `The folder to copy from.` },
+				{ name: 'to', type: 's', description: `The destination path of the copied folder.` },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.from === 'undefined' ) { throw new Error( `${Command.CommandName}: The "from" field is required.` ); }
-			if ( typeof Step.to === 'undefined' ) { throw new Error( `${Command.CommandName}: The "to" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.from === 'undefined' ) { throw new Error( `The "from" field is required.` ); }
+			if ( typeof Step.to === 'undefined' ) { throw new Error( `The "to" field is required.` ); }
 			let from_path = Engine.ResolvePath( Context, Step.from );
 			let to_path = Engine.ResolvePath( Context, Step.to );
-			if ( from_path.startsWith( to_path ) ) { throw new Error( `${Command.CommandName}: The "to" path cannot be a descendant of the "from" path.` ); }
+			if ( from_path.startsWith( to_path ) ) { throw new Error( `The "to" path cannot be a descendant of the "from" path.` ); }
 			copy_folder_recursive( from_path, to_path );
 			return true;
 		},

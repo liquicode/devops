@@ -28,10 +28,10 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.context === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field is required.` ); }
-			if ( typeof Step.context !== 'string' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field must be a string.` ); }
-			if ( typeof Step.path === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "path" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.context === 'undefined' ) { throw new Error( `The "context" field is required.` ); }
+			if ( typeof Step.context !== 'string' ) { throw new Error( `The "context" field must be a string.` ); }
+			if ( typeof Step.path === 'undefined' ) { throw new Error( `The "path" field is required.` ); }
 			if ( typeof Step.extensions === 'undefined' ) { Step.extensions = []; }
 			if ( typeof Step.front_matter_start === 'undefined' ) { Step.front_matter_start = '---'; }
 			if ( typeof Step.front_matter_end === 'undefined' ) { Step.front_matter_end = '---'; }
@@ -84,7 +84,7 @@ Fields:
 				}
 			};
 
-			let result = Engine.Loose.SetObjectValue( Context, Step.context, Contents );
+			let result = Engine.jsongin.SetValue( Context, Step.context, Contents );
 			if ( result === false ) { return false; }
 			return true;
 		},

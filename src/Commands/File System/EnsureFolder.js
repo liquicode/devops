@@ -8,19 +8,21 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$EnsureFolder',
-		CommandHelp: `$EnsureFolder:
-Makes sure that the specified folder exists. Creates the folder if needed.
-Fields:
-- folder: The folder to ensure.
-`,
+		Meta: {
+			Category: 'File System',
+			CommandName: '$EnsureFolder',
+			CommandHelp: `Makes sure that the specified folder exists. Creates the folder and any intermediate folders if needed.`,
+			CommandFields: [
+				{ name: 'folder', type: 's', description: `The folder to ensure/create.` },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.folder === 'undefined' ) { throw new Error( `${Command.CommandName}: The "folder" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.folder === 'undefined' ) { throw new Error( `The "folder" field is required.` ); }
 			let path = Engine.ResolvePath( Context, Step.folder );
 			if ( LIB_FS.existsSync( path ) === false )
 			{

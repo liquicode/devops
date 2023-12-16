@@ -5,6 +5,7 @@ const LIB_OS = require( 'os' );
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
 const LIB_CRYPTO = require( 'crypto' );
+const ShellColors = require( './ShellColors' )();
 
 
 //---------------------------------------------------------------------
@@ -146,43 +147,105 @@ function FindAllBetween( Text, StartText, EndText, Options )
 // }
 
 
-//---------------------------------------------------------------------
-function GetObjectValue( Document, Path )
-{
-	let path_elements = Path.split( '.' );
-	let data = Document;
-	for ( let index = 0; index < path_elements.length; index++ )
-	{
-		let name = path_elements[ index ];
-		if ( name === '' ) { continue; }
-		if ( typeof data !== 'object' ) { return; }
-		data = data[ name ];
-	}
-	return data;
-}
+// //---------------------------------------------------------------------
+// function GetObjectValue( Document, Path )
+// {
+// 	let path_elements = Path.split( '.' );
+// 	let data = Document;
+// 	for ( let index = 0; index < path_elements.length; index++ )
+// 	{
+// 		let name = path_elements[ index ];
+// 		if ( name === '' ) { continue; }
+// 		if ( typeof data !== 'object' ) { return; }
+// 		data = data[ name ];
+// 	}
+// 	return data;
+// }
+
+
+// //---------------------------------------------------------------------
+// function SetObjectValue( Document, Path, Value )
+// {
+// 	let path_elements = Path.split( '.' );
+// 	let data = Document;
+// 	for ( let index = 0; index < path_elements.length; index++ )
+// 	{
+// 		let name = path_elements[ index ];
+// 		if ( name === '' ) { continue; }
+// 		if ( typeof data !== 'object' ) { return false; }
+// 		if ( typeof data[ name ] === 'undefined' ) { data[ name ] = {}; }
+// 		if ( index < ( path_elements.length - 1 ) )
+// 		{
+// 			data = data[ name ];
+// 		}
+// 		else
+// 		{
+// 			data[ name ] = Value;
+// 		}
+// 	}
+// 	return true;
+// }
 
 
 //---------------------------------------------------------------------
-function SetObjectValue( Document, Path, Value )
+function FormatConsoleOutput( Title, Output, MaxWidth = 0 )
 {
-	let path_elements = Path.split( '.' );
-	let data = Document;
-	for ( let index = 0; index < path_elements.length; index++ )
+
+	// const TL_CHAR = '+';
+	// const TR_CHAR = '+';
+	// const BR_CHAR = '+';
+	// const BL_CHAR = '+';
+	// const H_CHAR = '-';
+	// const V_CHAR = '|';
+
+	const TL_CHAR = ShellColors.BoxChars.TopLeft; // '┌';
+	const TR_CHAR = ShellColors.BoxChars.TopRight; // '┐';
+	const BR_CHAR = ShellColors.BoxChars.BottomRight; // '┘';
+	const BL_CHAR = ShellColors.BoxChars.BottomLeft; // '└';
+	const H_CHAR = ShellColors.BoxChars.Horiz; // '─';
+	const V_CHAR = ShellColors.BoxChars.Vert; // '│';
+
+	let lines = Output.split( '\n' );
+	let output_width = 0;
+	lines.forEach( line => { if ( line.length > output_width ) { output_width = line.length; } } );
+	if ( output_width < ( Title.length + 6 ) ) { output_width = ( Title.length + 6 ); }
+
+	// Observe MaxWidth
+	if ( ( MaxWidth > 0 ) && ( output_width > MaxWidth ) )
 	{
-		let name = path_elements[ index ];
-		if ( name === '' ) { continue; }
-		if ( typeof data !== 'object' ) { return false; }
-		if ( typeof data[ name ] === 'undefined' ) { data[ name ] = {}; }
-		if ( index < ( path_elements.length - 1 ) )
+		let index = 0;
+		while ( index < lines.length )
 		{
-			data = data[ name ];
+			let line = lines[ index ];
+			if ( line.length > MaxWidth )
+			{
+				lines[ index ] = line.substring( 0, MaxWidth );
+				lines.splice( index + 1, 0, line.substring( MaxWidth ) );
+			}
+			index++;
 		}
-		else
-		{
-			data[ name ] = Value;
-		}
+		output_width = MaxWidth;
 	}
-	return true;
+
+	// Apply side borders.
+	for ( let index = 0; index < lines.length; index++ )
+	{
+		lines[ index ] = `${V_CHAR} ${lines[ index ]}${' '.repeat( output_width - lines[ index ].length )} ${V_CHAR}`;
+	}
+
+	// Apply top border.
+	let border = `${TL_CHAR}${H_CHAR.repeat( output_width + 2 )}${TR_CHAR}`;
+	if ( Title )
+	{
+		border = `${TL_CHAR}${H_CHAR.repeat( 2 )}[ ${Title} ]${H_CHAR.repeat( ( output_width - 4 ) - Title.length )}${TR_CHAR}`;
+	}
+	lines.splice( 0, 0, border );
+
+	// Apply bottom border.
+	border = `${BL_CHAR}${H_CHAR.repeat( output_width + 2 )}${BR_CHAR}`;
+	lines.push( border );
+
+	return lines.join( '\n' );
 }
 
 
@@ -193,7 +256,7 @@ module.exports = {
 	FindAllBetween: FindAllBetween,
 	// FindBetween: FindBetween,
 	// ReplaceBetween: ReplaceBetween,
-	GetObjectValue: GetObjectValue,
-	SetObjectValue: SetObjectValue,
-	SetObjectValue: SetObjectValue,
+	// GetObjectValue: GetObjectValue,
+	// SetObjectValue: SetObjectValue,
+	FormatConsoleOutput: FormatConsoleOutput,
 };

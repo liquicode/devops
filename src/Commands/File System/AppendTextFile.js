@@ -8,21 +8,23 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$AppendTextFile',
-		CommandHelp: `$AppendTextFile:
-Appends text to a file. The file is created if it does not exist.
-Fields:
-- filename: The file to write.
-- value: The text to write. Can be a context variable.
-`,
+		Meta: {
+			Category: 'File System',
+			CommandName: '$AppendTextFile',
+			CommandHelp: `Appends text to a file. The file is created if it does not exist.`,
+			CommandFields: [
+				{ name: 'filename', type: 's', description: `The name of the file to write to.` },
+				{ name: 'value', type: 's', description: `The text value to write to the file.` },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.filename === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "filename" field is required.` ); }
-			if ( typeof Step.value === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "value" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.filename === 'undefined' ) { throw new Error( `The "filename" field is required.` ); }
+			if ( typeof Step.value === 'undefined' ) { throw new Error( `The "value" field is required.` ); }
 			// Get the value.
 			let value = Step.value;
 			if ( typeof value === 'string' )

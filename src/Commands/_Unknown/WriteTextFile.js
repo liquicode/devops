@@ -20,9 +20,9 @@ Fields:
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.filename === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "filename" field is required.` ); }
-			if ( typeof Step.value === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "value" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.filename === 'undefined' ) { throw new Error( `The "filename" field is required.` ); }
+			if ( typeof Step.value === 'undefined' ) { throw new Error( `The "value" field is required.` ); }
 			// Get the value.
 			let value = Step.value;
 			if ( typeof value === 'string' )

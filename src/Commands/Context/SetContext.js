@@ -6,22 +6,21 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$SetContext',
-		CommandHelp: `$SetContext:
-Sets a context variable to a value
-Fields:
-- context: The context variable to modify. This variable will be created if it does not exist.
-- value: The value to set.
-`,
+		Meta: {
+			Category: 'Context',
+			CommandName: '$SetContext',
+			CommandHelp: `Sets a field in the context.`,
+			CommandFields: [
+				{ name: 'context', type: 's', description: 'The name of the Context field to store the value to.' },
+				{ name: 'value', type: '', description: 'The value to set.' },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.context === 'undefined' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field is required.` ); }
-			if ( typeof Step.context !== 'string' ) { throw new Error( `${Command.CommandName}: ${Command.CommandName}: The "context" field must be a string.` ); }
-			let result = Engine.Loose.SetObjectValue( Context, Step.context, Step.value );
+			let result = Engine.jsongin.SetValue( Context, Step.context, Step.value );
 			if ( result === false ) { return false; }
 			return true;
 		},

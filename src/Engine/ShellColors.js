@@ -6,6 +6,22 @@ module.exports = function ()
 
 
 		//---------------------------------------------------------------------
+		BoxChars: {
+			TopLeft: '┌',
+			TopRight: '┐',
+			BottomRight: '┘',
+			BottomLeft: '└',
+			Horiz: '─',
+			HorizDown: '┬',
+			HorizUp: '┴',
+			Vert: '│',
+			VertLeft: '┤',
+			VertRight: '├',
+			Intersection: '┼',
+		},
+
+
+		//---------------------------------------------------------------------
 		ShellBackcolor:
 		{
 			Default: 49,

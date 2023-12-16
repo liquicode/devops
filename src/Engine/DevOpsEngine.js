@@ -22,6 +22,7 @@ module.exports = function ( EngineSettings, Tasks )
 	Engine.Settings = EngineSettings;
 	Engine.Log = require( './Log' )( EngineSettings.LogSettings );
 	Engine.Loose = require( './Loose' );
+	Engine.jsongin = require( '@liquicode/jsongin' )();
 	Engine.Commands = {};
 	Engine.Tasks = Tasks;
 
@@ -47,9 +48,9 @@ module.exports = function ( EngineSettings, Tasks )
 				{
 					let command = require( path )( Engine );
 					if ( typeof command !== 'object' ) { continue; }
-					if ( typeof command.CommandName === 'undefined' ) { continue; }
+					if ( typeof command.Meta === 'undefined' ) { continue; }
 					if ( typeof command.Invoke !== 'function' ) { continue; }
-					Engine.Commands[ command.CommandName ] = command;
+					Engine.Commands[ command.Meta.CommandName ] = command;
 				}
 				catch ( error )
 				{
@@ -71,7 +72,7 @@ module.exports = function ( EngineSettings, Tasks )
 		for ( let index = 0; index < items.length; index++ )
 		{
 			let name = items[ index ];
-			let value = Engine.Loose.GetObjectValue( Context, name );
+			let value = Engine.jsongin.GetValue( Context, name );
 			if ( typeof value === 'undefined' ) { value = ''; }
 			if ( typeof value !== 'string' ) { value = JSON.stringify( value ); }
 			Text = Text.replace(
@@ -79,28 +80,6 @@ module.exports = function ( EngineSettings, Tasks )
 				value );
 		}
 		return Text;
-
-		// if ( Text.startsWith( '${' ) && Text.endsWith( '}' ) )
-		// {
-		// 	let found_text = Engine.Loose.FindBetween( Text, '${', '}' );
-		// 	let value = Engine.Loose.GetObjectValue( Context, found_text );
-		// 	return value;
-		// }
-		// else
-		// {
-		// 	let found_text = Engine.Loose.FindBetween( Text, '${', '}' );
-		// 	if ( found_text !== null ) 
-		// 	{
-		// 		let value = Engine.Loose.GetObjectValue( Context, found_text );
-		// 		if ( typeof value === 'undefined' ) { value = ''; }
-		// 		if ( typeof value !== 'string' )
-		// 		{
-		// 			value = JSON.stringify( value );
-		// 		}
-		// 		Text = Text.replace( "${" + found_text + "}", value );
-		// 	}
-		// 	return Text;
-		// }
 	};
 
 
@@ -108,8 +87,165 @@ module.exports = function ( EngineSettings, Tasks )
 	Engine.ResolvePath = function ( Context, Path )
 	{
 		Path = Engine.ResolveString( Context, Path );
-		Path = LIB_PATH.join( Engine.Settings.PackageFolder, Path );
+		Path = LIB_PATH.resolve( Engine.Settings.PackageFolder, Path );
 		return Path;
+	};
+
+
+	//---------------------------------------------------------------------
+	Engine.SendOutput = function ( Context, Outspec, Output )
+	{
+		if ( Outspec && Output )
+		{
+			let value = Output;
+			if ( Outspec.as === 'string' )
+			{
+				value = ( '' + value );
+			}
+			else if ( Outspec.as === 'json' )
+			{
+				value = JSON.stringify( value );
+			}
+			else if ( Outspec.as === 'json-friendly' )
+			{
+				value = JSON.stringify( value, null, '    ' );
+			}
+			if ( Outspec.log )
+			{
+				Engine.Log.Print( Engine.Loose.FormatConsoleOutput( 'Output', value ) );
+			}
+			if ( Outspec.console )
+			{
+				console.log( Engine.Loose.FormatConsoleOutput( 'Output', value ) );
+			}
+			if ( Outspec.filename )
+			{
+				let filename = Engine.ResolvePath( Context, Outspec.filename );
+				let path = LIB_PATH.dirname( filename );
+				if ( !LIB_FS.existsSync( path ) )
+				{
+					LIB_FS.mkdirSync( path, { recursive: true } );
+				}
+				LIB_FS.writeFileSync( filename, value, 'utf8' );
+			}
+			if ( Outspec.context )
+			{
+				Engine.jsongin.SetValue( Context, Outspec.context, value );
+			}
+		}
+		return;
+	};
+
+
+	//---------------------------------------------------------------------
+	Engine.SendErrors = function ( Context, Errspec, Errors )
+	{
+		if ( Errspec && Errors )
+		{
+			if ( Errspec.log )
+			{
+				Engine.Log.Error( Engine.Loose.FormatConsoleOutput( 'Errors', Errors ) );
+			}
+			if ( Errspec.console )
+			{
+				console.error( Engine.Loose.FormatConsoleOutput( 'Errors', Errors ) );
+			}
+			if ( Errspec.filename )
+			{
+				let filename = Engine.ResolvePath( Context, Errspec.filename );
+				LIB_FS.writeFileSync( filename, Errors, 'utf8' );
+			}
+			if ( Errspec.context )
+			{
+				Engine.jsongin.SetValue( Context, Errspec.context, Errors );
+			}
+		}
+		return;
+	};
+
+
+	//---------------------------------------------------------------------
+	Engine.ValidateStep = function ( Command, Step )
+	{
+		// Validate fields.
+		for ( let index = 0; index < Command.Meta.CommandFields.length; index++ )
+		{
+			let field = Command.Meta.CommandFields[ index ];
+			let field_name = `${Command.Meta.CommandName}.${field.name}`;
+			let value = Engine.jsongin.GetValue( Step, field_name );
+			let st = Engine.jsongin.ShortType( value );
+			if ( st === 'u' )
+			{
+				if ( typeof field.default === 'undefined' )
+				{
+					throw new Error( `The field [${field_name}] is required.` );
+				}
+				else
+				{
+					Engine.jsongin.SetValue( Step, field_name, field.default );
+				}
+			}
+			else if ( field.type === '' )
+			{
+				// Field is any type.
+			}
+			else if ( field.type.includes( st ) )
+			{
+				// Matches field type.
+			}
+			else
+			{
+				// Doesn't match field type.
+				throw new Error( `The field [${field_name}] requires a type [${field.type}] value, but type [${st}] was given instead.` );
+			}
+		}
+	};
+
+
+	//---------------------------------------------------------------------
+	Engine.RunSteps = async function ( TaskName, Steps, Context )
+	{
+		for ( let index = 0; index < Steps.length; index++ )
+		{
+			let step = Steps[ index ];
+			let keys = Object.keys( step );
+			if ( keys.length !== 1 ) { throw new Error( `RunSteps: Each task step must have one, and only one, command.` ); }
+			let command_name = keys[ 0 ];
+			let command = Engine.Commands[ command_name ];
+			if ( typeof command === 'undefined' ) { throw new Error( `RunSteps: The command [${command_name}] does not exist.` ); }
+			Engine.Log.Heading( `Step: ${command_name}` );
+			Engine.Log.Indent();
+			try
+			{
+				Engine.Log.Indent();
+				Engine.Log.Muted( JSON.stringify( step ) );
+				let step_t0 = new Date();
+				Engine.ValidateStep( command, step );
+				let result = await command.Invoke( step[ command_name ], Context );
+				let step_t1 = new Date();
+				if ( result === true )
+				{
+					Engine.Log.Muted( `Step Completed: ${command_name} OK, ${step_t1 - step_t0} ms.` );
+				}
+				else
+				{
+					Engine.Log.Error( `RunSteps: The [${command_name}] command returned false and halted execution of the task [${TaskName}].` );
+				}
+				Engine.Log.Unindent();
+				if ( result === false ) { return false; }
+
+			}
+			catch ( error )
+			{
+				Engine.Log.Error( `RunSteps: ${command_name} threw an error: ${error.message}` );
+				return false;
+			}
+			finally
+			{
+				Engine.Log.Unindent();
+			}
+		}
+		return true;
 	};
 
 
@@ -145,45 +281,8 @@ module.exports = function ( EngineSettings, Tasks )
 			Engine.Log.Heading( `Task: ${TaskName}` );
 			Engine.Log.Indent();
 			let task_t0 = new Date();
-			for ( let index = 0; index < steps.length; index++ )
-			{
-				let step = steps[ index ];
-				let keys = Object.keys( step );
-				if ( keys.length !== 1 ) { throw new Error( `RunTask: Each task step must have one, and only one, command.` ); }
-				let command_name = keys[ 0 ];
-				let command = Engine.Commands[ command_name ];
-				if ( typeof command === 'undefined' ) { throw new Error( `RunTask: The command [${command_name}] does not exist.` ); }
-				Engine.Log.Heading( `Step: ${command_name}` );
-				Engine.Log.Indent();
-				try
-				{
-					Engine.Log.Indent();
-					Engine.Log.Muted( JSON.stringify( step ) );
-					let step_t0 = new Date();
-					let result = await command.Invoke( step[ command_name ], context );
-					let step_t1 = new Date();
-					if ( result === true )
-					{
-						Engine.Log.Muted( `Step Completed: ${command_name} OK, ${step_t1 - step_t0} ms.` );
-					}
-					else
-					{
-						Engine.Log.Error( `RunTask: The [${command_name}] command returned false and halted execution of the task [${TaskName}].` );
-					}
-					Engine.Log.Unindent();
-					if ( result === false ) { return false; }
-
-				}
-				catch ( error )
-				{
-					Engine.Log.Error( `RunTask: ${command_name} threw an error: ${error.message}` );
-					return false;
-				}
-				finally
-				{
-					Engine.Log.Unindent();
-				}
-			}
+			let result = await Engine.RunSteps( TaskName, steps, context );
+			if ( result === false ) { return false; }
 			Engine.Log.Unindent();
 			let task_t1 = new Date();
 			Engine.Log.Muted( `Task Completed: ${TaskName} OK, ${task_t1 - task_t0} ms.` );

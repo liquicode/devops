@@ -9,20 +9,22 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$RemoveFolder',
-		CommandHelp: `$RemoveFolder:
-Removes the specified folder.
-Fields:
-- folder: The folder to remove.
-- force: If true, removes the folder even if it is not empoty.
-`,
+		Meta: {
+			Category: 'File System',
+			CommandName: '$RemoveFolder',
+			CommandHelp: `Removes a folder.`,
+			CommandFields: [
+				{ name: 'folder', type: 's', description: `The folder to remove.` },
+				{ name: 'force', type: 'b', default: false, description: `If true, removes the folder even if it is not empty.` },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.folder === 'undefined' ) { throw new Error( `${Command.CommandName}: The "folder" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.folder === 'undefined' ) { throw new Error( `The "folder" field is required.` ); }
 			let path = Engine.ResolvePath( Context, Step.folder );
 			if ( LIB_FS.existsSync( path ) === false ) { return true; }
 			if ( Step.force )

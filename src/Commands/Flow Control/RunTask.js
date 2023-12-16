@@ -6,28 +6,21 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$RunTask',
-		CommandHelp: `$RunTask:
-Runs a task from the loaded configuration.
-Fields:
-- name: The name of the task to run.
-- inherit_context: If true, runs the new task with the same context as this task.
-`,
+		Meta: {
+			Category: 'Flow Control',
+			CommandName: '$RunTask',
+			CommandHelp: `Runs another task found in the same devops task file.`,
+			CommandFields: [
+				{ name: 'task', type: 's', description: 'The name of the task to run.' },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.name === 'undefined' ) { throw new Error( `${Command.CommandName}: The "name" field is required.` ); }
-			if ( typeof Step.name !== 'string' ) { throw new Error( `${Command.CommandName}: The "name" field must be a string.` ); }
-			let name = Engine.ResolveString( Context, Step.name );
-			let context = null;
-			if ( Step.inherit_context )
-			{
-				context = Context;
-			}
-			let result = await Engine.RunTask( name, context );
+			let name = Engine.ResolveString( Context, Step.task );
+			let result = await Engine.RunTask( name, Context );
 			if ( result === false ) { return false; }
 			return true;
 		},

@@ -1,7 +1,17 @@
 'use strict';
 
+const LIB_FS = require( 'fs' );
+const LIB_PATH = require( 'path' );
+
+const TEMP_FOLDER = LIB_PATH.join( __dirname, '~' );
+LIB_FS.rmdirSync( TEMP_FOLDER, { recursive: true, force: true } );
+LIB_FS.mkdirSync( TEMP_FOLDER, { recursive: true } );
+
 const assert = require( 'assert' );
-const devops = require( '../src/Engine/DevOpsEngine' )( {}, {} );
+const devops = require( '../src/Engine/DevOpsEngine' )( {
+	PackageFolder: LIB_PATH.resolve( __dirname, '..' ),
+}, {} );
+
 
 describe( '100) Initialization Tests', () =>
 {
@@ -84,12 +94,12 @@ describe( '100) Initialization Tests', () =>
 			assert.ok( typeof devops.Commands.$ReadJsonFile !== 'undefined' );
 			assert.ok( typeof devops.Commands.$ReadTextFile !== 'undefined' );
 			assert.ok( typeof devops.Commands.$RemoveFolder !== 'undefined' );
-			assert.ok( typeof devops.Commands.$ReplaceFileText !== 'undefined' );
+			// assert.ok( typeof devops.Commands.$ReplaceFileText !== 'undefined' );
 			assert.ok( typeof devops.Commands.$RunTask !== 'undefined' );
 			assert.ok( typeof devops.Commands.$SemverInc !== 'undefined' );
 			assert.ok( typeof devops.Commands.$Shell !== 'undefined' );
-			assert.ok( typeof devops.Commands.$WriteJsonFile !== 'undefined' );
-			assert.ok( typeof devops.Commands.$WriteTextFile !== 'undefined' );
+			// assert.ok( typeof devops.Commands.$WriteJsonFile !== 'undefined' );
+			// assert.ok( typeof devops.Commands.$WriteTextFile !== 'undefined' );
 		} );
 
 		it( 'should not load commands starting with a "_" or "~"', () => 
@@ -223,6 +233,40 @@ describe( '100) Initialization Tests', () =>
 	// 	} );
 
 	// } );
+
+
+	describe( 'FormatConsoleOutput', () =>
+	{
+
+		it( 'should format console output', () => 
+		{
+			let text = `MIT License
+
+Copyright (c) 2023 liquicode
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`;
+
+			console.log( devops.Loose.FormatConsoleOutput( 'License', text, 120 ) );
+		} );
+
+
+	} );
 
 
 } );

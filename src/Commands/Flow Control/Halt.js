@@ -6,12 +6,12 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$Halt',
-		CommandHelp: `$Halt:
-Halts execution of the current task.
-Fields:
-This command takes no fields. Any that are supplied are ignored.
-`,
+		Meta: {
+			Category: 'Flow Control',
+			CommandName: '$Halt',
+			CommandHelp: `Halts execution of the current task.`,
+			CommandFields: [],
+		},
 
 
 		//---------------------------------------------------------------------

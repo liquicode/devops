@@ -8,25 +8,29 @@ module.exports = function ( Engine )
 
 
 		//---------------------------------------------------------------------
-		CommandName: '$ReadTextFile',
-		CommandHelp: `$ReadTextFile:
-Reads the contents of a text file into a context variable.
-Fields:
-- filename: The file to read.
-- context: The context variable to store the content in.
-`,
+		Meta: {
+			Category: 'File System',
+			CommandName: '$ReadTextFile',
+			CommandHelp: `Reads the contents of a text file.`,
+			CommandFields: [
+				{ name: 'filename', type: 's', description: `The text file to read.` },
+				{ name: 'out.as', type: 's', default: '', description: `Convert to one of these formats before output: 'string', 'json', 'json-friendly'. Leave empty for no conversion.` },
+				{ name: 'out.console', type: 'b', default: false, description: `Send output to the console (i.e. console.log).` },
+				{ name: 'out.log', type: 'b', default: false, description: `Send output to the devop's log.` },
+				{ name: 'out.filename', type: 's', default: '', description: `Send output to a file.` },
+				{ name: 'out.context', type: 's', default: '', description: `The name of a Context field to send the output to.` },
+			],
+		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
-			if ( typeof Step === 'undefined' ) { throw new Error( `${Command.CommandName}: The [Step] parameter is required.` ); }
-			if ( typeof Step.filename === 'undefined' ) { throw new Error( `${Command.CommandName}: The "filename" field is required.` ); }
-			if ( typeof Step.context === 'undefined' ) { throw new Error( `${Command.CommandName}: The "context" field is required.` ); }
+			if ( typeof Step === 'undefined' ) { throw new Error( `The [Step] parameter is required.` ); }
+			if ( typeof Step.filename === 'undefined' ) { throw new Error( `The "filename" field is required.` ); }
 			let filename = Engine.ResolvePath( Context, Step.filename );
-			let data = LIB_FS.readFileSync( filename, 'utf8' );
-			let result = Engine.Loose.SetObjectValue( Context, Step.context, data );
-			if ( result === false ) { return false; }
+			let value = LIB_FS.readFileSync( filename, 'utf8' );
+			Engine.SendOutput( Context, Step.out, value );
 			return true;
 		},
 

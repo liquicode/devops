@@ -8,17 +8,23 @@ module.exports = function ( Engine )
 		//---------------------------------------------------------------------
 		Meta: {
 			Category: 'Flow Control',
-			CommandName: '$Noop',
-			CommandHelp: `Performs no operation and is ignored.`,
-			CommandFields: [],
+			CommandName: '$RunSteps',
+			CommandHelp: `Runs a set of steps defined within this step.`,
+			CommandFields: [
+				{ name: 'steps', type: 'a', description: 'An array of steps to run.' },
+			],
 		},
 
 
 		//---------------------------------------------------------------------
 		Invoke: async function ( Step, Context )
 		{
+			let success = await Engine.RunSteps( '(RunSteps)', Step.steps, Context );
+			if ( success === false ) { return false; }
 			return true;
 		},
+
+
 	};
 
 	// Return the command.
