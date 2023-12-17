@@ -5,6 +5,7 @@
 - devops Docs
 
 	- [Main](external/readme.md)
+	- [Command Reference](guides/Command%20Reference.md)
 
 <hr>
 

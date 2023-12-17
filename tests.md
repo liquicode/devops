@@ -54,7 +54,7 @@
     $LoadJsModule
       ✔ it loads a Javascript module into a Context field
     $PrintContext
-      ✔ it prints the Context to a file
+      ✔ it prints the Context to a file (6ms)
     $SemverInc
       ✔ it increments a semver version number
     $SetContext
@@ -62,10 +62,10 @@
 
   600) Internet Tests
     $GetResource
-      ✔ should download an html file (512ms)
-      ✔ should make an API call (85ms)
+      ✔ should download an html file (494ms)
+      ✔ should make an API call (87ms)
 
 
-  23 passing (637ms)
+  23 passing (627ms)
 
 ```

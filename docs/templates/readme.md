@@ -144,8 +144,10 @@ All command line parameters are optional.
 - `task_name` : The name of the task within the tasks file to run. If not specified, a task called `default` will be run.
 
 
-Commands Reference
+Command Listing
 =====================================================================
+
+> See the [Command Reference](guides/Command%20Reference.md) for full command documentation.
 
 <%
 
@@ -166,23 +168,25 @@ Commands Reference
 			Output.printline( `` );
 			Output.printline( `### ${command.CommandName}` );
 			Output.printline( `` );
-			Output.printline( `${command.CommandHelp}` );
-			Output.printline( `` );
-			Output.printline( `**${command.CommandFields.length} Fields**` );
-			Output.printline( `` );
-			if( command.CommandFields.length )
+			let help_description = command.CommandHelp;
+			if( help_description.length > 200 ) { help_description = help_description.substring( 0, 198 ) + '...'; }
+			Output.printline( `> ${help_description}` );
+			Output.printline( `> ` );
+			let field_list = [];
+			for( let field_index = 0; field_index < command.CommandFields.length; field_index++ )
 			{
-				Output.printline( `> | Name | Type | Default | Description |` );
-				Output.printline( `> |------|------|---------|-------------|` );
-				for( let field_index = 0; field_index < command.CommandFields.length; field_index++ )
-				{
-					let field = command.CommandFields[ field_index ];
-					let default_text = '';
-					if( typeof field.default === 'undefined' ) { default_text = '(reqd)'; }
-					else { default_text = JSON.stringify( field.default ); }
-					Output.printline( `> | ${field.name} | ${field.type} | ${default_text} | ${field.description} |` );
-				}
+				let field = command.CommandFields[ field_index ];
+				field_list.push( '`' + field.name + '`' );
 			}
+			if( field_list.length )
+			{
+				Output.printline( `> **${field_list.length} Fields** : ${field_list.join( ', ' )}` );
+			}
+			else
+			{
+				Output.printline( `> **No Fields**` );
+			}
+			Output.printline( `` );
 			Output.printline( `___` );
 		}
 	}

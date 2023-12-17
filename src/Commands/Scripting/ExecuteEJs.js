@@ -15,7 +15,7 @@ module.exports = function ( Engine )
 			Category: 'Scripting',
 			CommandName: '$ExecuteEjs',
 			CommandHelp: `Processes a document file or string containing Embedded Javascript (ejs) code.`
-				+ `This command works in the same way as official ejs does (see: https://github.com/mde/ejs).`
+				+ `This command works in the same way as official ejs does (see: https://github.com/mde/ejs ).`
 				+ `The return value of this command is a text string containing the processed document after all embedded js code has been executed.`
 				+ `This returned string can be written to a file and/or stored in a Context variable.`
 				+ `This is a text based process and should work on any text based document (e.g. html, md, xml, json, etc.).`
@@ -23,7 +23,7 @@ module.exports = function ( Engine )
 				+ `Embedded code has access to the Task's 'Context' object and is able to modify it.`
 				+ `Code also has access to an 'Output' object which lets it print text directly to the final document.`
 				+ ``
-				+ `Supports the following ejs tags (from official ejs docs (https://ejs.co/#docs)):`
+				+ `Supports the following ejs tags (from official ejs docs ( https://ejs.co/#docs )):`
 				+ `- <%  :'Scriptlet' tag, for control-flow, no output`
 				+ `- <%_ : 'Whitespace Slurping' Scriptlet tag, strips all whitespace before it`
 				+ `- <%= : Outputs the value into the template (HTML escaped)`

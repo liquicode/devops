@@ -48,6 +48,7 @@
     ],
     "scripts": {
         "test": "mocha -u bdd test/*.js --timeout 0 --slow 10 --colors",
+        "build docs": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js build_docs",
         "publish version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js publish_version",
         "start new version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js start_new_version"
     },

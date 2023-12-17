@@ -31,6 +31,15 @@ module.exports = {
 
 	build_docs: [
 
+		// Generate: Command Reference.md
+		{
+			$ExecuteEjs: {
+				ejs_file: 'docs/templates/Command Reference.md',
+				use_eval: true,
+				out: { filename: 'docs/guides/Command Reference.md' },
+			}
+		},
+
 		// Generate: readme.md
 		{
 			$ExecuteEjs: {
