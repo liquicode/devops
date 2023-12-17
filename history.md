@@ -8,13 +8,23 @@
 v0.0.15
 ---------------------------------------------------------------------
 
-- Added Scripting Commands:
-	- $LoadJsModule
-	- $LoadDocuments
-	- $ExecuteJs
-	- $ExecuteEjs
-- Added Command: $CopyFolder
-- Added Context section of the Tasks file.
+- Added Context commands:
+	- `$LoadJsModule`
+- Added File System commands:
+	- `$CopyFolder`
+- Added Flow Control commands:
+	- `$If`
+	- `$RunSteps`
+- Added Scripting commands:
+	- `$ExecuteJs`
+	- `$ExecuteEjs`
+- Added support for a `Context` initialization section within the Tasks file.
+- Added initialization settings:
+	- `CommandsCaseSensitive` Defaults to false.
+- Added CLI:
+	- Use `-h` or `--help` to get command list.
+	- Use `-h $Command` or `--help $Command` to get help for a specific command.
+	- Use `-h text` or `--help text` to search for a command.
 
 
 v0.0.14
@@ -26,12 +36,12 @@ v0.0.14
 v0.0.13
 ---------------------------------------------------------------------
 
-- Version skipped.
+- Not published.
 
 
 v0.0.12 (2023-11-24)
 ---------------------------------------------------------------------
 
-- Added Command: $AppendTextFile
-- Added Command: $PrependTextFile
+- Added Command: `$AppendTextFile`
+- Added Command: `$PrependTextFile`
 

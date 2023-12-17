@@ -8,9 +8,11 @@ LIB_FS.rmdirSync( TEMP_FOLDER, { recursive: true, force: true } );
 LIB_FS.mkdirSync( TEMP_FOLDER, { recursive: true } );
 
 const assert = require( 'assert' );
-const devops = require( '../src/Engine/DevOpsEngine' )( {
-	PackageFolder: LIB_PATH.resolve( __dirname, '..' ),
-}, {} );
+const devops = require( '../src/Engine/DevOpsEngine' )
+	.NewDevops( {
+		ExecutionFolder: LIB_PATH.resolve( __dirname, '..' ),
+		CommandsCaseSensitive: true, // because we are explicitly invoking the commands
+	}, {} );
 
 
 describe( '300) Context Tests', () =>
@@ -26,7 +28,7 @@ describe( '300) Context Tests', () =>
 		{
 			// Create the step.
 			let step = {
-				filename: 'test/test-data/test-module.js',
+				filename: 'test/data/test-module.js',
 				out: { context: 'test_module' },
 			};
 

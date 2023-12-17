@@ -8,6 +8,22 @@
 			"name": "--- Devops Test ---------------------",
 		},
 		{
+			"name": "devops help",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"cwd": "${workspaceFolder}/build/dev",
+			"program": "${workspaceFolder}/src/devops.js",
+			"args": [
+				"-h",
+				"copy"
+			],
+			"outputCapture": "std",
+			"internalConsoleOptions": "openOnSessionStart",
+		},
+		{
 			"name": "devops clear",
 			"type": "node",
 			"request": "launch",
@@ -248,6 +264,25 @@
 				"--slow",
 				"10",
 				"--colors",
+			],
+			"outputCapture": "std",
+			"internalConsoleOptions": "openOnSessionStart",
+		},
+		{
+			"name": "-------",
+		},
+		{
+			"name": "Devops - Build Docs",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/src/devops.js",
+			"args": [
+				"--tasks",
+				"build\\build-docs.tasks.js"
 			],
 			"outputCapture": "std",
 			"internalConsoleOptions": "openOnSessionStart",

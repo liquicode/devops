@@ -1,5 +1,5 @@
 
-## Output Options for COmmands
+## Output Options for Commands
 
 Many Commands support a set of output options specified in the `out` parameter.
 The `out` parameter is a an object which contains one or more of the following fields:

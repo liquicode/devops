@@ -2,7 +2,7 @@
 
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
-// const jsongin = require( '@liquicode/jsongin' )();
+// const jsongin = require( '@liquicode/jsongin' );
 const _parse_ejs_sections = require( './_parse_ejs_sections' );
 
 module.exports = function ( Engine )
@@ -210,13 +210,23 @@ module.exports = function ( Engine )
 			let result = null;
 			if ( Step.use_eval )
 			{
-				result = eval( `var jsongin = require( '@liquicode/jsongin' )(); ${script}; Output.text;` );
+				let eval_script = `let jsongin = require( '@liquicode/jsongin' );\n`;
+				eval_script += `${script};\n`;
+				eval_script += `Output.text;\n`;
+				result = eval( eval_script );
 			}
 			else
 			{
+				let eval_script = `let jsongin = require( '@liquicode/jsongin' );\n`;
+				eval_script += `module.exports = function( Context, Output ){\n`;
+				eval_script += `${script};\n`;
+				eval_script += `return Output.text;\n`;
+				eval_script += `};\n`;
+
 				let filename = `${Engine.Loose.UUID()}.js`;
 				filename = Engine.ResolvePath( Context, filename );
-				LIB_FS.writeFileSync( filename, `var jsongin = require( '@liquicode/jsongin' )(); module.exports = function( Context, Output ){\n${script};\nreturn Output.text;\n};` );
+
+				LIB_FS.writeFileSync( filename, eval_script );
 				try
 				{
 					result = require( filename )( Context, Output );

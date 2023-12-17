@@ -6,10 +6,12 @@ const LIB_PATH = require( 'path' );
 
 const COMMAND_LINE = require( './Engine/CommandLine' )();
 const DEVOPS = require( './Engine/DevOpsEngine' );
+const HELP = require( './Engine/Help' );
 
 //---------------------------------------------------------------------
 // Get Command Line arguments.
 let Parameters = {
+	execution_folder: process.cwd(),
 	package_folder: '',
 	package_filename: '',
 	package: null,
@@ -18,6 +20,9 @@ let Parameters = {
 	task_name: '',
 };
 let ProcessArgs = COMMAND_LINE.FromCommandLine();
+// Help
+let help_mode = false;
+if ( ProcessArgs.flags.help || ProcessArgs.flags.h ) { help_mode = true; }
 // package_filename
 if ( !Parameters.package_filename && ProcessArgs.package_filename ) { Parameters.package_filename = ProcessArgs.package_filename; }
 if ( !Parameters.package_filename && ProcessArgs.package ) { Parameters.package_filename = ProcessArgs.package; }
@@ -35,30 +40,56 @@ if ( !Parameters.task_name && ProcessArgs.positional.length )
 
 
 //---------------------------------------------------------------------
-// Find the package.json file.
-function find_owning_package_filename( Path )
+// Check for the package.json file.
+if ( Parameters.package_filename ) 
 {
-	let filename = LIB_PATH.join( Path, 'package.json' );
-	if ( LIB_FS.existsSync( filename ) )
+	Parameters.package = require( Parameters.package_filename );
+	Parameters.package_folder = LIB_PATH.dirname( Parameters.package_filename );
+	Parameters.execution_folder = Parameters.package_folder;
+}
+
+
+//---------------------------------------------------------------------
+// Run startup.
+console.log( `@liquicode/devops is running in [${Parameters.execution_folder}].` );
+
+
+//---------------------------------------------------------------------
+// Handle Help requests.
+if ( ProcessArgs.flags.help || ProcessArgs.flags.h )
+{
+
+	// Construct the DevOps settings.
+	let settings = {
+		LogSettings: {
+			Colors: true,
+			Timestamps: false,
+		},
+	};
+	if ( ProcessArgs.flags.nocolor ) { settings.LogSettings.Colors = false; }
+	if ( ProcessArgs.flags.timestamps ) { settings.LogSettings.Timestamps = true; }
+
+	// Create the devops.
+	let devops = DEVOPS.NewDevops( settings, {} );
+
+	// Show the help.
+	if ( ProcessArgs.flags.help && ProcessArgs.help )
 	{
-		return filename;
+		HELP.PrintCommandDetail( devops, ProcessArgs.help );
+	}
+	else if ( ProcessArgs.flags.h && ProcessArgs.h )
+	{
+		HELP.PrintCommandDetail( devops, ProcessArgs.h );
 	}
 	else
 	{
-		Path = LIB_PATH.dirname( Path );
-		if ( Path === '' ) { return null; }
-		return find_owning_package_filename( Path );
+		HELP.PrintCommandList( devops );
 	}
-}
-if ( !Parameters.package_filename ) { Parameters.package_filename = find_owning_package_filename( process.cwd() ); }
-if ( !Parameters.package_filename )
-{
-	throw new Error( `Unable to find a package.json file.` );
-}
-Parameters.package = require( Parameters.package_filename );
-Parameters.package_folder = LIB_PATH.dirname( Parameters.package_filename );
 
-console.log( `@liquicode/devops is running in [${Parameters.package_folder}].` );
+	// Return, OK.
+	process.exit( 0 );
+}
+
 
 //---------------------------------------------------------------------
 // Load the tasks file.
@@ -88,21 +119,10 @@ Parameters.tasks = require( Parameters.tasks_filename );
 // Process the configuration.
 ( async () =>
 {
-	// List the available tasks.
-	if ( Parameters.task_name === '' )
-	{
-		console.log( `No task was specified. Here is a ist of available tasks:` );
-		for ( let key in Parameters.tasks )
-		{
-			console.log( `\t${key}` );
-		}
-		return;
-	}
-
 	// Construct the DevOps settings.
 	let settings = {
 		CommandPath: null,
-		PackageFolder: Parameters.package_folder,
+		ExecutionFolder: Parameters.execution_folder,
 		LogSettings: {
 			Colors: true,
 			Timestamps: false,
@@ -111,8 +131,28 @@ Parameters.tasks = require( Parameters.tasks_filename );
 	if ( ProcessArgs.flags.nocolor ) { settings.LogSettings.Colors = false; }
 	if ( ProcessArgs.flags.timestamps ) { settings.LogSettings.Timestamps = true; }
 
+	// Show help.
+	if ( help_mode )
+	{
+		let devops = DEVOPS.NewDevops( settings );
+		ShowHelp( devops, Parameters.task_name );
+		process.exit( 0 );
+	}
+
+	if ( Parameters.task_name === '' )
+	{
+		Parameters.task_name = 'default';
+	}
+
+	// Check to inject the Context package field.
+	if ( Parameters.package )
+	{
+		if ( !Parameters.tasks.Context ) { Parameters.tasks.Context = {}; }
+		Parameters.tasks.Context.package = Parameters.package;
+	}
+
 	// Execute the task.
-	let devops = DEVOPS( settings, Parameters.tasks );
+	let devops = DEVOPS.NewDevops( settings, Parameters.tasks );
 	let task_result = await devops.RunTask( Parameters.task_name );
 	if ( task_result === false )
 	{

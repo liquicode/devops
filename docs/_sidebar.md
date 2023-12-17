@@ -4,17 +4,13 @@
 
 - devops Docs
 
-	- [readme.md](external/readme.md)
-
-<hr>
-
-- References
-
+	- [Main](external/readme.md)
 
 <hr>
 
 - Examples
 
+	- [Examples](guides/Examples.md)
 
 <hr>
 

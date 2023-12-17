@@ -4,16 +4,21 @@ const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
 
 
+module.exports = NewDevops();
+
+
 //---------------------------------------------------------------------
-module.exports = function ( EngineSettings, Tasks )
+function NewDevops( EngineSettings = {}, Tasks = {} )
 {
-	if ( typeof EngineSettings.PackageFolder === 'undefined' ) { throw new Error( `devops: The "Settings.PackageFolder" field must exist.` ); }
+	if ( typeof EngineSettings.ExecutionFolder === 'undefined' ) { EngineSettings.ExecutionFolder = process.cwd(); }
+	// if ( typeof EngineSettings.PackageFolder === 'undefined' ) { throw new Error( `devops: The "Settings.PackageFolder" field must exist.` ); }
 	if ( typeof EngineSettings.CommandPath === 'undefined' ) { EngineSettings.CommandPath = null; }
 	if ( typeof EngineSettings.LogSettings === 'undefined' ) { EngineSettings.LogSettings = {}; }
 	if ( typeof EngineSettings.VariableDelimiters === 'undefined' ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
 	if ( !Array.isArray( EngineSettings.VariableDelimiters ) ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
 	if ( EngineSettings.VariableDelimiters.length === 0 ) { EngineSettings.VariableDelimiters = [ '${', '}' ]; }
 	if ( EngineSettings.VariableDelimiters.length === 1 ) { EngineSettings.VariableDelimiters.push( EngineSettings.VariableDelimiters[ 0 ] ); }
+	if ( typeof EngineSettings.CommandsCaseSensitive === 'undefined' ) { EngineSettings.CommandsCaseSensitive = false; }
 
 
 	//---------------------------------------------------------------------
@@ -22,9 +27,24 @@ module.exports = function ( EngineSettings, Tasks )
 	Engine.Settings = EngineSettings;
 	Engine.Log = require( './Log' )( EngineSettings.LogSettings );
 	Engine.Loose = require( './Loose' );
-	Engine.jsongin = require( '@liquicode/jsongin' )();
+	Engine.jsongin = require( '@liquicode/jsongin' );
 	Engine.Commands = {};
 	Engine.Tasks = Tasks;
+
+
+	//---------------------------------------------------------------------
+	// Factory Method
+	Engine.NewDevops = NewDevops;
+
+
+	//---------------------------------------------------------------------
+	// Library Info
+	let _package = require( '../../package.json' );
+	Engine.Library = {
+		name: _package.name,
+		url: _package.homepage,
+		version: _package.version,
+	};
 
 
 	//---------------------------------------------------------------------
@@ -50,7 +70,9 @@ module.exports = function ( EngineSettings, Tasks )
 					if ( typeof command !== 'object' ) { continue; }
 					if ( typeof command.Meta === 'undefined' ) { continue; }
 					if ( typeof command.Invoke !== 'function' ) { continue; }
-					Engine.Commands[ command.Meta.CommandName ] = command;
+					let command_key = command.Meta.CommandName;
+					if ( !Engine.Settings.CommandsCaseSensitive ) { command_key = command_key.toLowerCase(); }
+					Engine.Commands[ command_key ] = command;
 				}
 				catch ( error )
 				{
@@ -87,7 +109,7 @@ module.exports = function ( EngineSettings, Tasks )
 	Engine.ResolvePath = function ( Context, Path )
 	{
 		Path = Engine.ResolveString( Context, Path );
-		Path = LIB_PATH.resolve( Engine.Settings.PackageFolder, Path );
+		Path = LIB_PATH.resolve( Engine.Settings.ExecutionFolder, Path );
 		return Path;
 	};
 
@@ -210,10 +232,18 @@ module.exports = function ( EngineSettings, Tasks )
 			let step = Steps[ index ];
 			let keys = Object.keys( step );
 			if ( keys.length !== 1 ) { throw new Error( `RunSteps: Each task step must have one, and only one, command.` ); }
-			let command_name = keys[ 0 ];
-			let command = Engine.Commands[ command_name ];
-			if ( typeof command === 'undefined' ) { throw new Error( `RunSteps: The command [${command_name}] does not exist.` ); }
-			Engine.Log.Heading( `Step: ${command_name}` );
+			let command_key = keys[ 0 ];
+			let command = null;
+			if ( Engine.Settings.CommandsCaseSensitive ) 
+			{
+				command = Engine.Commands[ command_key ];
+			}
+			else
+			{
+				command = Engine.Commands[ command_key.toLowerCase() ];
+			}
+			if ( typeof command === 'undefined' ) { throw new Error( `RunSteps: The command [${command_key}] does not exist.` ); }
+			Engine.Log.Heading( `Step: ${command.Meta.CommandName}` );
 			Engine.Log.Indent();
 			try
 			{
@@ -221,15 +251,15 @@ module.exports = function ( EngineSettings, Tasks )
 				Engine.Log.Muted( JSON.stringify( step ) );
 				let step_t0 = new Date();
 				Engine.ValidateStep( command, step );
-				let result = await command.Invoke( step[ command_name ], Context );
+				let result = await command.Invoke( step[ command_key ], Context );
 				let step_t1 = new Date();
 				if ( result === true )
 				{
-					Engine.Log.Muted( `Step Completed: ${command_name} OK, ${step_t1 - step_t0} ms.` );
+					Engine.Log.Muted( `Step Completed: ${command.Meta.CommandName} OK, ${step_t1 - step_t0} ms.` );
 				}
 				else
 				{
-					Engine.Log.Error( `RunSteps: The [${command_name}] command returned false and halted execution of the task [${TaskName}].` );
+					Engine.Log.Error( `RunSteps: The [${command.Meta.CommandName}] command returned false and halted execution of the task [${TaskName}].` );
 				}
 				Engine.Log.Unindent();
 				if ( result === false ) { return false; }
@@ -237,7 +267,7 @@ module.exports = function ( EngineSettings, Tasks )
 			}
 			catch ( error )
 			{
-				Engine.Log.Error( `RunSteps: ${command_name} threw an error: ${error.message}` );
+				Engine.Log.Error( `RunSteps: ${command.Meta.CommandName} threw an error: ${error.message}` );
 				return false;
 			}
 			finally
@@ -275,7 +305,7 @@ module.exports = function ( EngineSettings, Tasks )
 
 		try
 		{
-			process.chdir( Engine.Settings.PackageFolder );
+			process.chdir( Engine.Settings.ExecutionFolder );
 
 			// Execute the task commands.
 			Engine.Log.Heading( `Task: ${TaskName}` );

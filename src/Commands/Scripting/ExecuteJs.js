@@ -2,7 +2,7 @@
 
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
-// const jsongin = require( '@liquicode/jsongin' )();
+// const jsongin = require( '@liquicode/jsongin' );
 
 module.exports = function ( Engine )
 {
@@ -57,13 +57,13 @@ module.exports = function ( Engine )
 			let result = null;
 			if ( Step.use_eval )
 			{
-				result = eval( `var jsongin = require( '@liquicode/jsongin' )(); ${script};` );
+				result = eval( `var jsongin = require( '@liquicode/jsongin' ); ${script};` );
 			}
 			else
 			{
 				let filename = `${Engine.Loose.UUID()}.js`;
 				filename = Engine.ResolvePath( Context, filename );
-				LIB_FS.writeFileSync( filename, `var jsongin = require( '@liquicode/jsongin' )(); module.exports = function( Context ){ ${script}; };` );
+				LIB_FS.writeFileSync( filename, `var jsongin = require( '@liquicode/jsongin' ); module.exports = function( Context ){ ${script}; };` );
 				try
 				{
 					result = require( filename )( Context, Output );
