@@ -1,63 +1,63 @@
 {
-	"name": "@liquicode/devops",
-	"version": "0.0.15",
-	"description": "A utility for devops, CI/CD, and general automation.",
-	"license": "MIT",
-	"homepage": "http://devops.liquicode.com",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/liquicode/devops"
-	},
-	"authors": [
-		{
-			"name": "Andre' G. Bowlin",
-			"email": "agbowlin@gmail.com",
-			"homepage": "http://liquicode.com"
-		}
-	],
-	"main": "src/devops.js",
-	"bin": "src/devops.js",
-	"files": [
-		"package.json",
-		"readme.md",
-		"license.md",
-		"version.md",
-		"dist/*",
-		"docs/*",
-		"src/*",
-		"tests/*"
-	],
-	"ignore": [
-		".*",
-		"~*",
-		"bower_components",
-		"node_modules",
-		"build"
-	],
-	"keywords": [
-		"liquicode",
-		"devops",
-		"ci",
-		"cd",
-		"ci/cd",
-		"continuous",
-		"integration",
-		"delivery",
-		"deployment",
-		"automation"
-	],
-	"scripts": {
-		"test": "mocha -u bdd test/*.js --timeout 0 --slow 10 --colors",
-		"publish version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js publish_version",
-		"start new version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js start_new_version"
-	},
-	"devDependencies": {
-		"mocha": "^10.2.0",
-		"webpack": "^5.89.0",
-		"webpack-cli": "^5.1.4",
-		"webpack-node-externals": "^3.0.0"
-	},
-	"dependencies": {
-		"@liquicode/jsongin": "0.0.19"
-	}
+    "name": "@liquicode/devops",
+    "version": "0.0.17",
+    "description": "A utility for devops, CI/CD, and general automation.",
+    "license": "MIT",
+    "homepage": "http://devops.liquicode.com",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/liquicode/devops"
+    },
+    "authors": [
+        {
+            "name": "Andre' G. Bowlin",
+            "email": "agbowlin@gmail.com",
+            "homepage": "http://liquicode.com"
+        }
+    ],
+    "main": "src/devops.js",
+    "bin": "src/devops.js",
+    "files": [
+        "package.json",
+        "readme.md",
+        "license.md",
+        "version.md",
+        "dist/*",
+        "docs/*",
+        "src/*",
+        "tests/*"
+    ],
+    "ignore": [
+        ".*",
+        "~*",
+        "bower_components",
+        "node_modules",
+        "build"
+    ],
+    "keywords": [
+        "liquicode",
+        "devops",
+        "ci",
+        "cd",
+        "ci/cd",
+        "continuous",
+        "integration",
+        "delivery",
+        "deployment",
+        "automation"
+    ],
+    "scripts": {
+        "test": "mocha -u bdd test/*.js --timeout 0 --slow 10 --colors",
+        "publish version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js publish_version",
+        "start new version": "node src/devops.js --tasks .\\build\\prod\\devops.tasks.js start_new_version"
+    },
+    "devDependencies": {
+        "mocha": "^10.2.0",
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4",
+        "webpack-node-externals": "^3.0.0"
+    },
+    "dependencies": {
+        "@liquicode/jsongin": "0.0.19"
+    }
 }

@@ -188,7 +188,7 @@ module.exports = {
 		},
 
 		// Rebuild the docs.
-		{ $RunTask: { name: 'build_docs' } },
+		{ $RunTask: { task: 'build_docs' } },
 
 		// Update github with the new version.
 		{

@@ -48,13 +48,13 @@
 
   200) Child Process Tests
     $Shell
-      ✔ it runs a simple shell command and captures the output (29ms)
+      ✔ it runs a simple shell command and captures the output (30ms)
 
   300) Context Tests
     $LoadJsModule
-      ✔ it loads a Javascript module into a Context field (6ms)
+      ✔ it loads a Javascript module into a Context field
     $PrintContext
-      ✔ it prints the Context to a file (6ms)
+      ✔ it prints the Context to a file
     $SemverInc
       ✔ it increments a semver version number
     $SetContext
@@ -62,10 +62,10 @@
 
   600) Internet Tests
     $GetResource
-      ✔ should download an html file (549ms)
-      ✔ should make an API call (409ms)
+      ✔ should download an html file (512ms)
+      ✔ should make an API call (85ms)
 
 
-  23 passing (1s)
+  23 passing (637ms)
 
 ```
