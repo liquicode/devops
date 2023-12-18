@@ -2,7 +2,7 @@
 
 > Home: [http://devops.liquicode.com](http://devops.liquicode.com)
 >
-> Version: 0.0.18
+> Version: 0.0.19
 
 ### A utility for devops, CI/CD, and general automation.
 
