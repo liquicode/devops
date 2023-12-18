@@ -1,8 +1,8 @@
-# <%- Engine.Library.name %>
+# <%- Context.Package.name %>
 
-> Home: [<%- Engine.Library.url %>](<%- Engine.Library.url %>)
+> Home: [<%- Context.Package.homepage %>](<%- Context.Package.homepage %>)
 >
-> Version: <%- Engine.Library.version %>
+> Version: <%- Context.Package.version %>
 
 ### A utility for devops, CI/CD, and general automation.
 
@@ -147,7 +147,7 @@ All command line parameters are optional.
 Command Listing
 =====================================================================
 
-> See the [Command Reference](guides/Command%20Reference.md) for full command documentation.
+> See the [Command Reference](guides/Command-Reference.md) for full command documentation.
 
 <%
 

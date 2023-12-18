@@ -1,5 +1,4 @@
-# devops
-[`@liquiode/devops`](https://github.com/liquicode/devops)
+# @liquicode/devops
 
 
 # Project History

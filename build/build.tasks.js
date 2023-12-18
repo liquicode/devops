@@ -2,6 +2,12 @@
 
 module.exports = {
 
+	Context:{
+		Package: require( '../package.json' ),
+		AWS_ProfileName: 'admin',
+		AWS_BucketName: 'devops.liquicode.com',
+	},
+
 	run_tests: [
 
 		// Run tests and capture the output.
@@ -12,31 +18,19 @@ module.exports = {
 				err: { console: true },
 			}
 		},
-		{ $PrependTextFile: { filename: 'tests.md', value: '```\n' } },
+		{ $PrependTextFile: { filename: 'tests.md', value: '# ${Package.name}\n\n> Version: ${Package.version}\n\n# Test Results\n\n```\n' } },
 		{ $AppendTextFile: { filename: 'tests.md', value: '```\n' } },
 
 	],
-
-	// sync_version: [
-
-	// 	// Read the package file.
-	// 	{ $ReadJsonFile: { filename: 'package.json', context: 'Package' } },
-
-	// 	// Update files with the current version.
-	// 	// { $ReplaceFileText: { filename: 'version.md', value: '${Package.version}' } },
-	// 	// { $ReplaceFileText: { filename: 'readme.md', start_text: '(v', end_text: ')', value: '${Package.version}' } },
-	// 	{ $ReplaceFileText: { filename: 'docs/_coverpage.md', start_text: '(v', end_text: ')', value: '${Package.version}' } },
-
-	// ],
 
 	build_docs: [
 
 		// Generate: Command Reference.md
 		{
 			$ExecuteEjs: {
-				ejs_file: 'docs/templates/Command Reference.md',
+				ejs_file: 'docs/templates/Command-Reference.md',
 				use_eval: true,
-				out: { filename: 'docs/guides/Command Reference.md' },
+				out: { filename: 'docs/guides/Command-Reference.md' },
 			}
 		},
 
@@ -88,7 +82,7 @@ module.exports = {
 		// Update aws s3 bucket with package docs.
 		{
 			$Shell: {
-				command: 'set "AWS_PROFILE=admin" & aws s3 sync docs s3://devops.liquicode.com',
+				command: 'set "AWS_PROFILE=${AWS_ProfileName}" & aws s3 sync docs s3://${AWS_BucketName}',
 				out: { console: true },
 				err: { console: true },
 			},
