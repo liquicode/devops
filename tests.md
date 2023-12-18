@@ -1,3 +1,9 @@
+# @liquicode/devops
+
+> Version: 0.0.18
+
+# Test Results
+
 ```
 
 
@@ -48,7 +54,7 @@
 
   200) Child Process Tests
     $Shell
-      ✔ it runs a simple shell command and captures the output (30ms)
+      ✔ it runs a simple shell command and captures the output (29ms)
 
   300) Context Tests
     $LoadJsModule
@@ -62,10 +68,10 @@
 
   600) Internet Tests
     $GetResource
-      ✔ should download an html file (494ms)
-      ✔ should make an API call (87ms)
+      ✔ should download an html file (524ms)
+      ✔ should make an API call (86ms)
 
 
-  23 passing (627ms)
+  23 passing (655ms)
 
 ```

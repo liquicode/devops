@@ -147,7 +147,7 @@ All command line parameters are optional.
 Command Listing
 =====================================================================
 
-> See the [Command Reference](guides/Command%20Reference.md) for full command documentation.
+> See the [Command Reference](guides/Command-Reference.md) for full command documentation.
 
 
 
