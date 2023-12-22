@@ -9,6 +9,8 @@
 
 - Change `$PrintContext` to just `$Print` and specify the text to print.
 
+- For $Shell, add environment variables
+
 
 # ADD
 

@@ -8,7 +8,9 @@
 
 ## $Shell
 
-Execute a command line. Can redirect process output and errors.
+Execute a command line.
+
+Can redirect process output and errors.
 
 **11 Fields:**
 
@@ -74,7 +76,9 @@ ___
 
 ## $LoadJsModule
 
-Loads (requires) a Javascript module (.js) file into a context variable. Javascipt modules can contain data and/or functions and are accessible to other tasks.
+Loads (requires) a Javascript module (.js) file into a context variable.
+
+Javascipt modules can contain data and/or functions and are accessible to other tasks.
 
 **6 Fields:**
 
@@ -364,7 +368,7 @@ Code also has access to an 'Output' object which lets it print text directly to 
 
 
 
-Supports the following ejs tags (from the official ejs docs at https://ejs.co/#docs):
+Supports the following ejs tags (from the official ejs docs at: https://ejs.co/#docs):
 
 - <%  : "Scriptlet" tag, for control-flow, no output
 

@@ -163,7 +163,7 @@ Command Listing
 
 ### $Shell
 
-> Execute a command line. Can redirect process output and errors.
+> Execute a command line.
 > 
 > **11 Fields** : `command`, `halt_on_error`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`, `err.console`, `err.log`, `err.filename`, `err.context`
 > 
@@ -177,7 +177,7 @@ ___
 
 ### $LoadJsModule
 
-> Loads (requires) a Javascript module (.js) file into a context variable. Javascipt modules can contain data and/or funct...
+> Loads (requires) a Javascript module (.js) file into a context variable.
 > 
 > **6 Fields** : `filename`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
 > 
