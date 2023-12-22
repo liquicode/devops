@@ -113,7 +113,7 @@ Context variables can be referenced within string values by using the `${variabl
 ```
 
 
-Example Tasks File
+Task File Structure
 ---------------------------------------------------------------------
 
 The `.js` version of a tasks file:
@@ -124,7 +124,13 @@ module.exports = {
 		message: 'Hello World!',
 	},
 	// Tasks ...
-	Task1: [ Step1, Step2, ... ],
+	Task1: [
+		// Steps ...
+		{ $CopyFile: { from: 'file1.json', to: 'data.json' } },
+		Step2,
+		Step3,
+		...
+	],
 	Task2: [ ... ],
 	...
 };
@@ -151,8 +157,8 @@ Command Listing
 
 
 
-Child Process Commands
----------------------------------------------------------------------
+
+## Child Process Commands
 
 
 ### $Shell
@@ -160,20 +166,23 @@ Child Process Commands
 > Execute a command line. Can redirect process output and errors.
 > 
 > **11 Fields** : `command`, `halt_on_error`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`, `err.console`, `err.log`, `err.filename`, `err.context`
-
+> 
+> [More ...](guides/Command-Reference?id=shell)
+> 
 ___
 
 
-Context Commands
----------------------------------------------------------------------
+## Context Commands
 
 
 ### $LoadJsModule
 
-> Loads (requires) a Javascript module (.js) file into a context variable. Javascipt modules can contain data and/or functions and are accessible to other tasks.
+> Loads (requires) a Javascript module (.js) file into a context variable. Javascipt modules can contain data and/or funct...
 > 
 > **6 Fields** : `filename`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=loadjsmodule)
+> 
 ___
 
 ### $PrintContext
@@ -181,7 +190,9 @@ ___
 > Prints a context variable value to the output.
 > 
 > **6 Fields** : `context`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=printcontext)
+> 
 ___
 
 ### $SemverInc
@@ -189,7 +200,9 @@ ___
 > Increments a semver formatted version number stored in the context.
 > 
 > **1 Fields** : `context`
-
+> 
+> [More ...](guides/Command-Reference?id=semverinc)
+> 
 ___
 
 ### $SetContext
@@ -197,12 +210,13 @@ ___
 > Sets a field in the context.
 > 
 > **2 Fields** : `context`, `value`
-
+> 
+> [More ...](guides/Command-Reference?id=setcontext)
+> 
 ___
 
 
-File System Commands
----------------------------------------------------------------------
+## File System Commands
 
 
 ### $AppendTextFile
@@ -210,7 +224,9 @@ File System Commands
 > Appends text to a file. The file is created if it does not exist.
 > 
 > **2 Fields** : `filename`, `value`
-
+> 
+> [More ...](guides/Command-Reference?id=appendtextfile)
+> 
 ___
 
 ### $ClearFolder
@@ -218,7 +234,9 @@ ___
 > Removes all files from a folder.
 > 
 > **2 Fields** : `folder`, `recurse`
-
+> 
+> [More ...](guides/Command-Reference?id=clearfolder)
+> 
 ___
 
 ### $CopyFile
@@ -226,7 +244,9 @@ ___
 > Copies a file from one folder to another. If the destination path does not exist, it will be created
 > 
 > **2 Fields** : `from`, `to`
-
+> 
+> [More ...](guides/Command-Reference?id=copyfile)
+> 
 ___
 
 ### $CopyFolder
@@ -234,7 +254,9 @@ ___
 > Copies a folder and its contents from one path to another.
 > 
 > **2 Fields** : `from`, `to`
-
+> 
+> [More ...](guides/Command-Reference?id=copyfolder)
+> 
 ___
 
 ### $EnsureFolder
@@ -242,7 +264,9 @@ ___
 > Makes sure that the specified folder exists. Creates the folder and any intermediate folders if needed.
 > 
 > **1 Fields** : `folder`
-
+> 
+> [More ...](guides/Command-Reference?id=ensurefolder)
+> 
 ___
 
 ### $PrependTextFile
@@ -250,7 +274,9 @@ ___
 > Inserts text into the beginning of a file. The file is created if it does not exist.
 > 
 > **2 Fields** : `filename`, `value`
-
+> 
+> [More ...](guides/Command-Reference?id=prependtextfile)
+> 
 ___
 
 ### $ReadJsonFile
@@ -258,7 +284,9 @@ ___
 > Reads the contents of a json file or field.
 > 
 > **7 Fields** : `filename`, `field`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=readjsonfile)
+> 
 ___
 
 ### $ReadTextFile
@@ -266,7 +294,9 @@ ___
 > Reads the contents of a text file.
 > 
 > **6 Fields** : `filename`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=readtextfile)
+> 
 ___
 
 ### $RemoveFolder
@@ -274,12 +304,13 @@ ___
 > Removes a folder.
 > 
 > **2 Fields** : `folder`, `force`
-
+> 
+> [More ...](guides/Command-Reference?id=removefolder)
+> 
 ___
 
 
-Flow Control Commands
----------------------------------------------------------------------
+## Flow Control Commands
 
 
 ### $Halt
@@ -287,7 +318,9 @@ Flow Control Commands
 > Halts execution of the current task.
 > 
 > **No Fields**
-
+> 
+> [More ...](guides/Command-Reference?id=halt)
+> 
 ___
 
 ### $If
@@ -295,7 +328,9 @@ ___
 > Conditionally execute steps based on the state of the Context.
 > 
 > **3 Fields** : `criteria`, `then`, `else`
-
+> 
+> [More ...](guides/Command-Reference?id=if)
+> 
 ___
 
 ### $Noop
@@ -303,7 +338,9 @@ ___
 > Performs no operation and is ignored.
 > 
 > **No Fields**
-
+> 
+> [More ...](guides/Command-Reference?id=noop)
+> 
 ___
 
 ### $RunSteps
@@ -311,7 +348,9 @@ ___
 > Runs a set of steps defined within this step.
 > 
 > **1 Fields** : `steps`
-
+> 
+> [More ...](guides/Command-Reference?id=runsteps)
+> 
 ___
 
 ### $RunTask
@@ -319,12 +358,13 @@ ___
 > Runs another task found in the same devops task file.
 > 
 > **1 Fields** : `task`
-
+> 
+> [More ...](guides/Command-Reference?id=runtask)
+> 
 ___
 
 
-Internet Commands
----------------------------------------------------------------------
+## Internet Commands
 
 
 ### $GetResource
@@ -332,28 +372,33 @@ Internet Commands
 > Downloads a resource from the internet and stores it to a file and/or Context variable.
 > 
 > **7 Fields** : `url`, `as`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=getresource)
+> 
 ___
 
 
-Scripting Commands
----------------------------------------------------------------------
+## Scripting Commands
 
 
 ### $ExecuteEjs
 
-> Processes a document file or string containing Embedded Javascript (ejs) code.This command works in the same way as official ejs does (see: https://github.com/mde/ejs ).The return value of this comm...
+> Processes a document file or string containing Embedded Javascript (ejs) code.
 > 
 > **15 Fields** : `ejs_file`, `ejs_string`, `ejs_start`, `ejs_end`, `use_eval`, `debug_script.as`, `debug_script.console`, `debug_script.log`, `debug_script.filename`, `debug_script.context`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=executeejs)
+> 
 ___
 
 ### $ExecuteJs
 
-> Executes Javascript code within a string or a file.The code is essentially require'ed (or eval'ed) into the task and has full access to all of the nodejs functions.This can be extremely unsafe but i...
+> Executes Javascript code within a string or a file.
 > 
 > **8 Fields** : `code_file`, `code_string`, `use_eval`, `out.as`, `out.console`, `out.log`, `out.filename`, `out.context`
-
+> 
+> [More ...](guides/Command-Reference?id=executejs)
+> 
 ___
 
 

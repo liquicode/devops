@@ -14,7 +14,9 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'Internet',
 			CommandName: '$GetResource',
-			CommandHelp: `Downloads a resource from the internet and stores it to a file and/or Context variable.`,
+			CommandHelp: [
+				`Downloads a resource from the internet and stores it to a file and/or Context variable.`
+			],
 			CommandFields: [
 				{ name: 'url', type: 's', description: `The URL of the resource.` },
 				{ name: 'as', type: 's', default: 'binary', description: `Format of the resource, one of: 'binary', 'string', 'json'.` },

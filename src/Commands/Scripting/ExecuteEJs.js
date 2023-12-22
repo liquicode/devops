@@ -14,46 +14,48 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'Scripting',
 			CommandName: '$ExecuteEjs',
-			CommandHelp: `Processes a document file or string containing Embedded Javascript (ejs) code.`
-				+ `This command works in the same way as official ejs does (see: https://github.com/mde/ejs ).`
-				+ `The return value of this command is a text string containing the processed document after all embedded js code has been executed.`
-				+ `This returned string can be written to a file and/or stored in a Context variable.`
-				+ `This is a text based process and should work on any text based document (e.g. html, md, xml, json, etc.).`
-				+ ``
-				+ `Embedded code has access to the Task's 'Context' object and is able to modify it.`
-				+ `Code also has access to an 'Output' object which lets it print text directly to the final document.`
-				+ ``
-				+ `Supports the following ejs tags (from official ejs docs ( https://ejs.co/#docs )):`
-				+ `- <%  :'Scriptlet' tag, for control-flow, no output`
-				+ `- <%_ : 'Whitespace Slurping' Scriptlet tag, strips all whitespace before it`
-				+ `- <%= : Outputs the value into the template (HTML escaped)`
-				+ `- <%- : Outputs the unescaped value into the template`
-				+ `- <%# : Comment tag, no execution, no output`
-				+ `- <%% : Outputs a literal '<%'`
-				+ `-  %> : Plain ending tag`
-				+ `- -%> : Trim-mode ('newline slurp') tag, trims following newline`
-				+ `- _%> : 'Whitespace Slurping' ending tag, removes all whitespace after it`
-				+ ``
-				+ `Shortcut for a single line of code:`
-				+ `'<%*' treats entire rest of the line as code.`
-				+ `No closing tag should be provided.`
-				+ `Can be combined with other start tag modifiers (e.g. <%*- or <%-* ).`
-				+ `A side effect of using '*' is that no newline will be printed after it,`
-				+ `making it very useful when used alone '<%*' but confusing when used with other modifiers.`
-				+ `If you see an error like '$ExecuteEjs threw an error: missing ) after argument list',`
-				+ `check to make sure you haven't also included a closing tag after using '*'.`
-				+ ``
-				+ `Include other ejs files:`
-				+ `Use the 'include' statement to include other ejs files.`
-				+ `Must appear by itself within a code section and contain the path of the file to include.`
-				+ `ex: '<% include( docs/_partials/heading.ejs ) %>' Note the absence of quotes surrounding the filename.`
-				+ `Like all other filenames, it must be represented relative to the package folder.`
-				+ ``
-				+ `Differences from official ejs:`
-				+ `- Can execute embedded code using "require()" or "eval()". Official ejs uses only "eval()".`
-				+ `- The '*' tag modifier is not part of offical ejs.`
-				+ `- The 'include' statement requires a path relative to the package folder. With official ejs you can specify a full path or a path relative to the including file.`
-				+ `- The @liquicode/jsongin library is preloaded and available as 'jsongin' within the code.`,
+			CommandHelp: [
+				`Processes a document file or string containing Embedded Javascript (ejs) code.`
+				, `This command works in the same way as official ejs does (see: https://github.com/mde/ejs ).`
+				, `The return value of this command is a text string containing the processed document after all embedded js code has been executed.`
+				, `This returned string can be written to a file and/or stored in a Context variable.`
+				, `This is a text based process and should work on any text based document (e.g. html, md, xml, json, etc.).`
+				, ``
+				, `Embedded code has access to the Task's 'Context' object and is able to modify it.`
+				, `Code also has access to an 'Output' object which lets it print text directly to the final document.`
+				, ``
+				, `Supports the following ejs tags (from the official ejs docs at: https://ejs.co/#docs):`
+				, `- <%  : "Scriptlet" tag, for control-flow, no output`
+				, `- <%_ : "Whitespace Slurping" Scriptlet tag, strips all whitespace before it`
+				, `- <%= : Outputs the value into the template (HTML escaped)`
+				, `- <%- : Outputs the unescaped value into the template`
+				, `- <%# : Comment tag, no execution, no output`
+				, `- <%% : Outputs a literal "<%"`
+				, `-  %> : Plain ending tag`
+				, `- -%> : Trim-mode ("newline slurp") tag, trims following newline`
+				, `- _%> : "Whitespace Slurping" ending tag, removes all whitespace after it`
+				, ``
+				, `Shortcut for a single line of code:`
+				, `"<%*" treats entire rest of the line as code.`
+				, `No closing tag should be provided.`
+				, `Can be combined with other start tag modifiers (e.g. <%*- or <%-* ).`
+				, `A side effect of using "*" is that no newline will be printed after it,`
+				, `making it very useful when used alone "<%*" but confusing when used with other modifiers.`
+				, `If you see an error like '$ExecuteEjs threw an error: missing ) after argument list',`
+				, `check to make sure you haven't also included a closing tag after using "*".`
+				, ``
+				, `Include other ejs files:`
+				, `Use the "include" statement to include other ejs files.`
+				, `Must appear by itself within a code section and contain the path of the file to include.`
+				, `ex: "<% include( docs/_partials/heading.ejs ) %>" Note the absence of quotes surrounding the filename.`
+				, `Like all other filenames, it must be represented relative to the package folder.`
+				, ``
+				, `Differences from official ejs:`
+				, `- Can execute embedded code using "require()" or "eval()". Official ejs uses only "eval()".`
+				, `- The "*" tag modifier is not part of offical ejs.`
+				, `- The "include" statement requires a path relative to the package folder. With official ejs you can specify a full path or a path relative to the including file.`
+				, `- The @liquicode/jsongin library is preloaded and available as "jsongin" within the code.`
+			],
 			CommandFields: [
 				{ name: 'ejs_file', type: 's', default: '', description: 'The path to an Embedded Javascript file to load and execute.' },
 				{ name: 'ejs_string', type: 's', default: '', description: 'A string of Embedded Javascript code to execute. Either this or code_file should be used.' },
@@ -160,9 +162,22 @@ module.exports = function ( Engine )
 			for ( let section_index = 0; section_index < sections.length; section_index++ )
 			{
 				let section = sections[ section_index ];
-				script += `/* Section ${section_index + 1}\n`;
-				script += JSON.stringify( section, null, '    ' );
-				script += `*/\n`;
+				// Process 'include()'
+				if ( ( section.type === 'code' )
+					&& section.text.startsWith( 'include(' )
+					&& ( section.text.endsWith( ')' ) || section.text.endsWith( ');' ) ) )
+				{
+					let filename = section.text.substring( 8 );
+					if ( filename.endsWith( ')' ) ) { filename = filename.substring( 0, filename.length - 1 ); }
+					if ( filename.endsWith( ');' ) ) { filename = filename.substring( 0, filename.length - 2 ); }
+					filename = filename.trim();
+					filename = Engine.ResolvePath( Context, filename );
+					section.text = LIB_FS.readFileSync( filename, 'utf8' );
+				}
+				// Section debug header.
+				script += `// Section ${section_index + 1}\n`;
+				script += '// ';
+				script += JSON.stringify( section, null, '    ' ).split( '\n' ).join( '\n// ' ) + '\n';
 				if ( section.type === 'text' )
 				{
 					script += `Output.print( ${JSON.stringify( section.text )} );\n`;

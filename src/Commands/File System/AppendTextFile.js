@@ -11,7 +11,9 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'File System',
 			CommandName: '$AppendTextFile',
-			CommandHelp: `Appends text to a file. The file is created if it does not exist.`,
+			CommandHelp: [
+				`Appends text to a file. The file is created if it does not exist.`
+			],
 			CommandFields: [
 				{ name: 'filename', type: 's', description: `The name of the file to write to.` },
 				{ name: 'value', type: 's', description: `The text value to write to the file.` },

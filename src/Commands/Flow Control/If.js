@@ -9,7 +9,7 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'Flow Control',
 			CommandName: '$If',
-			CommandHelp: `Conditionally execute steps based on the state of the Context.`,
+			CommandHelp: [ `Conditionally execute steps based on the state of the Context.` ],
 			CommandFields: [
 				{ name: 'criteria', type: 'o', description: 'A jsongin query criteria to match against the Context.' },
 				{ name: 'then', type: 'a', default: [], description: 'Steps to run when the condition is true.' },

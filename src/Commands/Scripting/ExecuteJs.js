@@ -13,11 +13,13 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'Scripting',
 			CommandName: '$ExecuteJs',
-			CommandHelp: `Executes Javascript code within a string or a file.`
-				+ `The code is essentially require'ed (or eval'ed) into the task and has full access to all of the nodejs functions.`
-				+ `This can be extremely unsafe but it also gives you much more flexibility.`
-				+ `The Javascript code will have access to the Task Context (as 'Context') and be able to modify it.`
-				+ `The @liquicode/jsongin library is preloaded and available as 'jsongin' within the code.`,
+			CommandHelp: [
+				`Executes Javascript code within a string or a file.`
+				, `The code is essentially require'ed (or eval'ed) into the task and has full access to all of the nodejs functions.`
+				, `This can be extremely unsafe but it also gives you much more flexibility.`
+				, `The Javascript code will have access to the Task Context (as 'Context') and be able to modify it.`
+				, `The @liquicode/jsongin library is preloaded and available as 'jsongin' within the code.`
+			],
 			CommandFields: [
 				{ name: 'code_file', type: 's', default: '', description: 'The path to a Javascript file to load and execute.' },
 				{ name: 'code_string', type: 's', default: '', description: 'A string of Javascript code to execute. Either this or code_file should be used.' },

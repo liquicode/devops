@@ -2,6 +2,7 @@
 
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
+const ShellColors = require( './ShellColors' )();
 
 
 module.exports = NewDevops();
@@ -248,14 +249,14 @@ function NewDevops( EngineSettings = {}, Tasks = {} )
 			try
 			{
 				Engine.Log.Indent();
-				Engine.Log.Muted( JSON.stringify( step ) );
+				Engine.Log.Muted( `${ShellColors.BoxChars.VertRight} ${JSON.stringify( step )}` );
 				let step_t0 = new Date();
 				Engine.ValidateStep( command, step );
 				let result = await command.Invoke( step[ command_key ], Context );
 				let step_t1 = new Date();
 				if ( result === true )
 				{
-					Engine.Log.Muted( `Step Completed: ${command.Meta.CommandName} OK, ${step_t1 - step_t0} ms.` );
+					Engine.Log.Muted( `${ShellColors.BoxChars.BottomLeft} Step Completed: ${command.Meta.CommandName} OK, ${step_t1 - step_t0} ms.` );
 				}
 				else
 				{

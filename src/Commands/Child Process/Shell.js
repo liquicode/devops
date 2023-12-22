@@ -12,7 +12,10 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'Child Process',
 			CommandName: '$Shell',
-			CommandHelp: `Execute a command line. Can redirect process output and errors.`,
+			CommandHelp: [
+				`Execute a command line.`,
+				`Can redirect process output and errors.`
+			],
 			CommandFields: [
 				{ name: 'command', type: 's', description: `The command line to execute.` },
 				{ name: 'halt_on_error', type: 'b', default: true, description: `Set to false to ignore errors and continue processing this task. Defaults to true.` },
@@ -25,6 +28,30 @@ module.exports = function ( Engine )
 				{ name: 'err.log', type: 'b', default: false, description: `Send errors to the devop's error log.` },
 				{ name: 'err.filename', type: 's', default: '', description: `Send errors to a file.` },
 				{ name: 'err.context', type: 's', default: '', description: `The name of a Context field to send the errors to.` },
+			],
+			Examples: [
+				{
+					$Shell: {
+						_: 'Print the node version to the console.',
+						command: 'node --version',
+						out: { console: true }
+					}
+				},
+				{
+					$Shell: {
+						_: 'Print the node version to the Context.',
+						command: 'node --version',
+						out: { context: 'node_version' }
+					}
+				},
+				{
+					$Shell: {
+						_: 'Store output in Context and print errors to console.',
+						command: 'dubious-process -args',
+						out: { context: 'result' },
+						err: { console: true },
+					}
+				},
 			],
 		},
 

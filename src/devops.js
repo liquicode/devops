@@ -51,7 +51,7 @@ if ( Parameters.package_filename )
 
 //---------------------------------------------------------------------
 // Run startup.
-console.log( `@liquicode/devops is running in [${Parameters.execution_folder}].` );
+console.log( `@liquicode/devops (v${DEVOPS.Library.version}) is running in [${Parameters.execution_folder}].` );
 
 
 //---------------------------------------------------------------------

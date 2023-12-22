@@ -113,7 +113,7 @@ Context variables can be referenced within string values by using the `${variabl
 ```
 
 
-Example Tasks File
+Task File Structure
 ---------------------------------------------------------------------
 
 The `.js` version of a tasks file:
@@ -124,7 +124,13 @@ module.exports = {
 		message: 'Hello World!',
 	},
 	// Tasks ...
-	Task1: [ Step1, Step2, ... ],
+	Task1: [
+		// Steps ...
+		{ $CopyFile: { from: 'file1.json', to: 'data.json' } },
+		Step2,
+		Step3,
+		...
+	],
 	Task2: [ ... ],
 	...
 };
@@ -149,47 +155,6 @@ Command Listing
 
 > See the [Command Reference](guides/Command-Reference.md) for full command documentation.
 
-<%
-
-	let all_commands = Object.values( Engine.Commands );
-	let categories = jsongin.Distinct( all_commands, { 'Meta.Category': 1 } );
-	for( let category_index = 0; category_index < categories.length; category_index++ )
-	{
-		let category_name = categories[ category_index ].Meta.Category;
-		Output.printline( `` );
-		Output.printline( `` );
-		Output.printline( `${category_name} Commands` );
-		Output.printline( '-'.repeat( 69 ) );
-		Output.printline( `` );
-		let commands = jsongin.Filter( all_commands, { 'Meta.Category': category_name } );
-		for( let command_index = 0; command_index < commands.length; command_index++ )
-		{
-			let command = commands[ command_index ].Meta;
-			Output.printline( `` );
-			Output.printline( `### ${command.CommandName}` );
-			Output.printline( `` );
-			let help_description = command.CommandHelp;
-			if( help_description.length > 200 ) { help_description = help_description.substring( 0, 198 ) + '...'; }
-			Output.printline( `> ${help_description}` );
-			Output.printline( `> ` );
-			let field_list = [];
-			for( let field_index = 0; field_index < command.CommandFields.length; field_index++ )
-			{
-				let field = command.CommandFields[ field_index ];
-				field_list.push( '`' + field.name + '`' );
-			}
-			if( field_list.length )
-			{
-				Output.printline( `> **${field_list.length} Fields** : ${field_list.join( ', ' )}` );
-			}
-			else
-			{
-				Output.printline( `> **No Fields**` );
-			}
-			Output.printline( `` );
-			Output.printline( `___` );
-		}
-	}
-
-%>
+<% include( docs/templates/Print-Commands.js ); %>
+<% PrintCommandHelpSummary(); %>
 

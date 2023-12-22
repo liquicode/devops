@@ -282,7 +282,8 @@
 			"program": "${workspaceFolder}/src/devops.js",
 			"args": [
 				"--tasks",
-				"build\\build-docs.tasks.js"
+				"build\\build.tasks.js",
+				"build_docs"
 			],
 			"outputCapture": "std",
 			"internalConsoleOptions": "openOnSessionStart",

@@ -30,6 +30,7 @@ module.exports = {
 			$ExecuteEjs: {
 				ejs_file: 'docs/templates/Command-Reference.md',
 				use_eval: true,
+				// debug_script: { filename: '~temp/Command-Reference.js' },
 				out: { filename: 'docs/guides/Command-Reference.md' },
 			}
 		},
@@ -39,7 +40,7 @@ module.exports = {
 			$ExecuteEjs: {
 				ejs_file: 'docs/templates/readme.md',
 				use_eval: true,
-				// debug_script: { filename: 'docs/templates/readme.md.script.js' },
+				// debug_script: { filename: '~temp/readme.md.script.js' },
 				out: { filename: 'docs/external/readme.md' },
 			}
 		},

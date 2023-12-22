@@ -11,8 +11,10 @@ module.exports = function ( Engine )
 		Meta: {
 			Category: 'Context',
 			CommandName: '$LoadJsModule',
-			CommandHelp: `Loads (requires) a Javascript module (.js) file into a context variable.` +
-				` Javascipt modules can contain data and/or functions and are accessible to other tasks.`,
+			CommandHelp: [
+				`Loads (requires) a Javascript module (.js) file into a context variable.`,
+				`Javascipt modules can contain data and/or functions and are accessible to other tasks.`
+			],
 			CommandFields: [
 				{ name: 'filename', type: 's', description: 'The Javascript module file to load.' },
 				{ name: 'out.as', type: 's', default: '', description: `Convert to one of these formats before output: 'string', 'json', 'json-friendly'. Leave empty for no conversion.` },

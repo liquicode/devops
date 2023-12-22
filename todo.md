@@ -4,8 +4,10 @@
 # TODO
 
 - Scripting/$ExecuteEjs
-	- Validate the start code modifier: _
-	- Validate the end code modifiers: _ and -
+	- Validate/test the start code modifier: _
+	- Validate/test the end code modifiers: _ and -
+
+- Change `$PrintContext` to just `$Print` and specify the text to print.
 
 
 # ADD
