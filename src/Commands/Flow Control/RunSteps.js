@@ -13,6 +13,17 @@ module.exports = function ( Engine )
 			CommandFields: [
 				{ name: 'steps', type: 'a', description: 'An array of steps to run.' },
 			],
+			Examples: [
+				{
+					$RunSteps: {
+						_: 'Run a number of sub steps.',
+						steps: [
+							{ $Shell: { command: 'node --version', out: { console: true } } },
+							{ $Shell: { command: 'node my-file.js', out: { console: true } } },
+						]
+					}
+				},
+			],
 		},
 
 

@@ -2,9 +2,10 @@
 
 const LIB_FS = require( 'fs' );
 const LIB_PATH = require( 'path' );
+const FS_rmdirSync = require('./utils/FS_rmdirSync');
 
 const TEMP_FOLDER = LIB_PATH.join( __dirname, '~' );
-LIB_FS.rmdirSync( TEMP_FOLDER, { recursive: true, force: true } );
+FS_rmdirSync( TEMP_FOLDER, { recursive: true, force: true } );
 LIB_FS.mkdirSync( TEMP_FOLDER, { recursive: true } );
 
 const assert = require( 'assert' );

@@ -308,6 +308,40 @@ Runs a set of steps defined within this step.
 |------|------|---------|-------------|
 | steps | a | (reqd) | An array of steps to run. |
 
+**Examples:**
+```js
+{
+    $RunSteps: 
+    {
+        _:     "Run a number of sub steps.",
+        steps: 
+        [
+            
+            {
+                $Shell: 
+                {
+                    command: "node --version",
+                    out:     
+                    {
+                        console: true,
+                    },
+                },
+            },
+            
+            {
+                $Shell: 
+                {
+                    command: "node my-file.js",
+                    out:     
+                    {
+                        console: true,
+                    },
+                },
+            },
+        ],
+    },
+}
+```
 ___
 
 ## $RunTask
@@ -320,6 +354,16 @@ Runs another task found in the same devops task file.
 |------|------|---------|-------------|
 | task | s | (reqd) | The name of the task to run. |
 
+**Examples:**
+```js
+{
+    $RunTask: 
+    {
+        _:    "Run another task in the same file.",
+        task: "build_docs",
+    },
+}
+```
 ___
 
 

@@ -49,9 +49,34 @@ function NewDevops( EngineSettings = {}, Tasks = {} )
 
 
 	//---------------------------------------------------------------------
+	function mount_command( Engine, Filename )
+	{
+		let factory = null;
+		try
+		{
+			factory = require( Filename );
+		}
+		catch ( error ) 
+		{
+			console.error( `Error in require: ${error.message}` );
+			return;
+		}
+		let command = factory( Engine );
+		if ( typeof command !== 'object' ) { return; }
+		if ( typeof command.Meta === 'undefined' ) { return; }
+		if ( typeof command.Invoke !== 'function' ) { return; }
+		let command_key = command.Meta.CommandName;
+		if ( !Engine.Settings.CommandsCaseSensitive ) { command_key = command_key.toLowerCase(); }
+		if ( Engine.Commands[ command_key ] ) { throw new Error( `A command named [${command_key}] already exists.` ); }
+		Engine.Commands[ command_key ] = command;
+		return;
+	}
+
+
+	//---------------------------------------------------------------------
 	Engine.LoadCommands = function ( Path, Recurse )
 	{
-		if ( LIB_FS.existsSync( Path ) === false ) { return false; }
+		if ( LIB_FS.existsSync( Path ) === false ) { throw new Error( `Command path does not exist [${Path}].` ); }
 		let entries = LIB_FS.readdirSync( Path, { withFileTypes: true, recursive: true } );
 		for ( let index = 0; index < entries.length; index++ )
 		{
@@ -67,13 +92,18 @@ function NewDevops( EngineSettings = {}, Tasks = {} )
 			{
 				try
 				{
-					let command = require( path )( Engine );
-					if ( typeof command !== 'object' ) { continue; }
-					if ( typeof command.Meta === 'undefined' ) { continue; }
-					if ( typeof command.Invoke !== 'function' ) { continue; }
-					let command_key = command.Meta.CommandName;
-					if ( !Engine.Settings.CommandsCaseSensitive ) { command_key = command_key.toLowerCase(); }
-					Engine.Commands[ command_key ] = command;
+					mount_command( Engine, path );
+					// var require_path = path;
+					// // if ( !require_path.startsWith( '/' ) ) { require_path = '/' + require_path; }
+					// let factory = require( require_path );
+					// let command = factory( Engine );
+					// if ( typeof command !== 'object' ) { continue; }
+					// if ( typeof command.Meta === 'undefined' ) { continue; }
+					// if ( typeof command.Invoke !== 'function' ) { continue; }
+					// let command_key = command.Meta.CommandName;
+					// if ( !Engine.Settings.CommandsCaseSensitive ) { command_key = command_key.toLowerCase(); }
+					// if ( Engine.Commands[ command_key ] ) { throw new Error( `A command named [${command_key}] already exists.` ); }
+					// Engine.Commands[ command_key ] = command;
 				}
 				catch ( error )
 				{
@@ -336,7 +366,58 @@ function NewDevops( EngineSettings = {}, Tasks = {} )
 
 	//---------------------------------------------------------------------
 	// Load the standard commands.
-	Engine.LoadCommands( LIB_PATH.join( __dirname, '../Commands' ), true );
+
+	// var command_path = './../Commands';
+	// var command_path = LIB_PATH.resolve( __dirname, '../Commands' );
+	// var command_path = LIB_PATH.join( __dirname, '../Commands' );
+	// Engine.LoadCommands( command_path, true );
+
+	mount_command( Engine, '../Commands/Child Process/Shell' );
+	mount_command( Engine, '../Commands/Context/LoadJsModule' );
+	mount_command( Engine, '../Commands/Context/PrintContext' );
+	mount_command( Engine, '../Commands/Context/SemverInc' );
+	mount_command( Engine, '../Commands/Context/SetContext' );
+	mount_command( Engine, '../Commands/File System/AppendTextFile' );
+	mount_command( Engine, '../Commands/File System/ClearFolder' );
+	mount_command( Engine, '../Commands/File System/CopyFile' );
+	mount_command( Engine, '../Commands/File System/CopyFolder' );
+	mount_command( Engine, '../Commands/File System/EnsureFolder' );
+	mount_command( Engine, '../Commands/File System/PrependTextFile' );
+	mount_command( Engine, '../Commands/File System/ReadJsonFile' );
+	mount_command( Engine, '../Commands/File System/ReadTextFile' );
+	mount_command( Engine, '../Commands/File System/RemoveFolder' );
+	mount_command( Engine, '../Commands/Flow Control/Halt' );
+	mount_command( Engine, '../Commands/Flow Control/If' );
+	mount_command( Engine, '../Commands/Flow Control/Noop' );
+	mount_command( Engine, '../Commands/Flow Control/RunSteps' );
+	mount_command( Engine, '../Commands/Flow Control/RunTask' );
+	mount_command( Engine, '../Commands/Internet/GetResource' );
+	mount_command( Engine, '../Commands/Scripting/ExecuteEJs' );
+	mount_command( Engine, '../Commands/Scripting/ExecuteJs' );
+
+	// Engine.Commands.$shell = require( '../Commands/Child Process/Shell' )( Engine );
+	// Engine.Commands.$loadjsmodule = require( '../Commands/Context/LoadJsModule' )( Engine );
+	// Engine.Commands.$printcontext = require( '../Commands/Context/PrintContext' )( Engine );
+	// Engine.Commands.$semverinc = require( '../Commands/Context/SemverInc' )( Engine );
+	// Engine.Commands.$setcontext = require( '../Commands/Context/SetContext' )( Engine );
+	// Engine.Commands.$appendtextfile = require( '../Commands/File System/AppendTextFile' )( Engine );
+	// Engine.Commands.$clearfolder = require( '../Commands/File System/ClearFolder' )( Engine );
+	// Engine.Commands.$copyfile = require( '../Commands/File System/CopyFile' )( Engine );
+	// Engine.Commands.$copyfolder = require( '../Commands/File System/CopyFolder' )( Engine );
+	// Engine.Commands.$ensurefolder = require( '../Commands/File System/EnsureFolder' )( Engine );
+	// Engine.Commands.$prependtextfile = require( '../Commands/File System/PrependTextFile' )( Engine );
+	// Engine.Commands.$readjsonfile = require( '../Commands/File System/ReadJsonFile' )( Engine );
+	// Engine.Commands.$readtextfile = require( '../Commands/File System/ReadTextFile' )( Engine );
+	// Engine.Commands.$removefolder = require( '../Commands/File System/RemoveFolder' )( Engine );
+	// Engine.Commands.$halt = require( '../Commands/Flow Control/Halt' )( Engine );
+	// Engine.Commands.$if = require( '../Commands/Flow Control/If' )( Engine );
+	// Engine.Commands.$noop = require( '../Commands/Flow Control/Noop' )( Engine );
+	// Engine.Commands.$runsteps = require( '../Commands/Flow Control/RunSteps' )( Engine );
+	// Engine.Commands.$runtask = require( '../Commands/Flow Control/RunTask' )( Engine );
+	// Engine.Commands.$getresource = require( '../Commands/Internet/GetResource' )( Engine );
+	// Engine.Commands.$executeejs = require( '../Commands/Scripting/ExecuteEJs' )( Engine );
+	// Engine.Commands.$executejs = require( '../Commands/Scripting/ExecuteJs' )( Engine );
+
 	// Load the user commands.
 	if ( Engine.Settings.CommandPath )
 	{

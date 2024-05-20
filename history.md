@@ -4,7 +4,16 @@
 # Project History
 
 
-v0.0.19
+v0.0.20 (2024-05-20)
+---------------------------------------------------------------------
+
+- Updated to: @liquicode/jsongin v0.0.20
+- Fixed `MODULE_NOT_FOUND` on later versions of node.
+	- The underlying problem is that using `require` with an absolute path will load the module, yet emit this warning.
+	- Commands are no longer dynamically loaded.
+
+
+v0.0.19 (2023-12-22)
 ---------------------------------------------------------------------
 
 - Updated docs.

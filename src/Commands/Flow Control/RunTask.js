@@ -13,6 +13,14 @@ module.exports = function ( Engine )
 			CommandFields: [
 				{ name: 'task', type: 's', description: 'The name of the task to run.' },
 			],
+			Examples: [
+				{
+					$RunTask: {
+						_: 'Run another task in the same file.',
+						task: 'build_docs'
+					}
+				},
+			],
 		},
 
 

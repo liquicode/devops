@@ -23,3 +23,4 @@
 	- [Testing Output](external/tests.md)
 	- [Software License](external/license.md)
 	- [Software Version](external/version.md)
+	- [Author CV](http://agb-resume.liquicode.com)

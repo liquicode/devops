@@ -30,7 +30,16 @@ module.exports = function ( Engine )
 			if ( Step.force )
 			{
 				//NOTE; do we need to call rmSync here?
-				LIB_FS.rmdirSync( path, { recursive: true, force: true } );
+				// LIB_FS.rmdirSync( path, { recursive: true, force: true } );
+				// FS_rmdirSync( path, { recursive: true, force: true } );
+				if ( process.version >= 'v14.14.0' )
+				{
+					LIB_FS.rmSync( path, { recursive: true, force: true } );
+				}
+				else
+				{
+					LIB_FS.rmdirSync( path, { recursive: true, force: true } );
+				}
 			}
 			else
 			{
